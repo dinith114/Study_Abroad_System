@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-// import logo from "../../public/logo.png";
-// import ProfileIcon from "../../public/sec.png";
-// import { Link } from "react-router-dom";
+import logo from "../Images/logo.png";
+import ProfileIcon from "../Images/sec.png";
+import { Link } from "react-router-dom";
 
 function NavBar() {
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
@@ -11,9 +11,9 @@ function NavBar() {
     <div>
       <header className="bg-slate-50 shadow-md">
         <div className="flex justify-between items-center max-w-6xl mx-auto py-3">
-          {/* <Link to="/">
+          <Link to="/">
             <img src={logo} alt="Logo" className="h-10 w-auto md:h-16" />
-          </Link> */}
+          </Link>
 
           <ul className="flex gap-7 relative text-lg md:text-xl">
             <li
@@ -56,11 +56,11 @@ function NavBar() {
           </ul>
           <div className="flex items-center space-x-4 ">
             <div className="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full">
-              {/* <img
+              <img
                 src={ProfileIcon}
                 alt="Profile"
                 className="w-full h-full object-cover rounded-full"
-              /> */}
+              />
             </div>
             <button className="text-white bg-grNavTextHov hover:bg-grNavText hover:scale-105 focus:outline-none font-medium rounded-2xl text-sm md:text-xl px-4 py-2">
               Log out

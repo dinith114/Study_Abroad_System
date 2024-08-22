@@ -12,11 +12,10 @@ import { ParticipantList } from "./Marketing/ParticipantList";
 import EventForm from "./Marketing/EventForm";
 
 const App = () => {
-
   return (
     <div>
-      <NavBar />
       <Router>
+        <NavBar />
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/creatEvent" element={<EventForm />} />

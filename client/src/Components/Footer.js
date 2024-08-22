@@ -1,5 +1,5 @@
 import React from "react";
-//import logo from "../../public/logo.png";
+import logo from "../Images/logo.png";
 
 function Footer() {
   return (
@@ -7,11 +7,11 @@ function Footer() {
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0 text-center md:text-left">
-            {/* <img
+            <img
               src={logo}
               className="h-20 m-auto md:me-3"
               alt="Global Reach Logo"
-            /> */}
+            />
             <span className="self-center text-gray-500 text-lg">
               12 Schofield Pl, Colombo 00300 <br />
               globalreachcolombo@gmail.com <br />
