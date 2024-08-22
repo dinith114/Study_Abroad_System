@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaCalculator } from 'react-icons/fa';
 import BankCard from './BankCard';
-import Bank from '../Images/boc.png';
+import BOC from '../Images/boc.png';
+import HNB from "../Images/hnb.png";
+import dfcc from "../Images/dfcc.jpg";
+import peoples from "../Images/peoples.png";
+import seylan from "../Images/seylan.jpg";
+import nsb from "../Images/nsb.png";
+import panasia from "../Images/panasia.jpg";
+import sampath from "../Images/sampath.jpg";
 
 function LoanApp() {
   const today = new Date();
@@ -28,14 +35,14 @@ function LoanApp() {
   const [selectedBank, setSelectedBank] = useState(null);
 
   const banks = [
-    { bankName: 'Bank of Ceylon', rank: '2', logo: '../Images/boc.png' },
-    { bankName: 'HNB Bank', rank: '2', logo: '.../Images/hnb.png' },
-    { bankName: 'DFCC Bank', rank: '2', logo: '.../Images/dfcc.jpg' },
-    { bankName: 'Peoples Bank', rank: '2', logo: '.../Images/peoples.png' },
-    { bankName: 'Seylan Bank', rank: '2', logo: '.../Images/seylan.jpg' },
-    { bankName: 'NSB Bank', rank: '2', logo: '.../Images/nsb.png' },
-    { bankName: 'Pan Asia Bank', rank: '2', logo: '.../Images/panasia.jpg' },
-    { bankName: 'Sampath Bank', rank: '2', logo: '.../Images/sampath.jpg' },
+    { bankName: "Bank of Ceylon", rank: "2", logo: BOC },
+    { bankName: "HNB Bank", rank: "2", logo: HNB },
+    { bankName: "DFCC Bank", rank: "2", logo: dfcc },
+    { bankName: "Peoples Bank", rank: "2", logo: peoples },
+    { bankName: "Seylan Bank", rank: "2", logo: seylan },
+    { bankName: "NSB Bank", rank: "2", logo: nsb },
+    { bankName: "Pan Asia Bank", rank: "2", logo: panasia },
+    { bankName: "Sampath Bank", rank: "2", logo: sampath },
   ];
 
   // Dynamic Loan Calculation
