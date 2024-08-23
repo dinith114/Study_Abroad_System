@@ -13,6 +13,23 @@ const initialData = [
     email: "dinith.gsw@gmail.com",
     status: "Verified",
   },
+  {
+    key: "2",
+    date: "13th July 2024",
+    name: "Dinith Wickramasinghe",
+    mobile: "+94 715740136",
+    email: "dinith.gsw@gmail.com",
+    status: "not Verified",
+  },
+  {
+    key: "3",
+    date: "14th July 2024",
+    name: "Dinith Wickramasinghe",
+    mobile: "+94 715740136",
+    email: "dinith.gsw@gmail.com",
+    status: "not Verified",
+  },
+
   // Add more records as needed
 ];
 
@@ -22,11 +39,14 @@ const ParticipantList = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
 
   const handleView = (record) => {
+    console.log("record",record)
     setSelectedRecord(record);
+    console.log("selectedRecord", selectedRecord);
     setVisible(true);
   };
 
   const handleConfirm = () => {
+    console.log("awaaaa")
     const updatedData = data.map((item) =>
       item.key === selectedRecord.key ? { ...item, status: "Verified" } : item
     );
