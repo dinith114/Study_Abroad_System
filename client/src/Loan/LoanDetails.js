@@ -1,16 +1,42 @@
-import React from 'react';
-import { FiPrinter, FiEdit } from 'react-icons/fi';  // Import icons from react-icons
+import React, { useState } from 'react';
+import { FiPrinter, FiEdit } from 'react-icons/fi';
+import { FaSpinner } from 'react-icons/fa'; // Import spinner icon
+import PageTitle from '../Components/PageTitle';
 
-function LoanDetails({ application, onEdit }) {  // Assuming an onEdit function is passed as prop
+function LoanDetails({ application, onEdit }) {
+  const [loadingApprove, setLoadingApprove] = useState(false); // State for Approve loading
+  const [loadingReject, setLoadingReject] = useState(false); // State for Reject loading
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleApprove = () => {
+    setLoadingApprove(true); // Start loading
+    // Simulate an API call or some asynchronous task
+    setTimeout(() => {
+      alert('Application Approved!');
+      setLoadingApprove(false); // Stop loading
+    }, 2000); // Simulate 2 seconds delay
+  };
+
+  const handleReject = () => {
+    setLoadingReject(true); // Start loading
+    // Simulate an API call or some asynchronous task
+    setTimeout(() => {
+      alert('Application Rejected!');
+      setLoadingReject(false); // Stop loading
+    }, 2000); // Simulate 2 seconds delay
   };
 
   return (
     <div className="relative mt-8 p-8 rounded-lg shadow-md border border-gray-200 lg:mx-40 bg-white">
       
-      {/* Button Group (Top-Right Corner) */}
-      <div className="absolute top-4 right-4 flex space-x-4">
+      {/* Page Title */}
+      <PageTitle title="Loan Application Details" />
+      
+      {/* Button Group (Under Page Title) */}
+      <div className="flex justify-end space-x-4 mb-8">
         {/* Print Button */}
         <button
           onClick={handlePrint}
@@ -27,10 +53,6 @@ function LoanDetails({ application, onEdit }) {  // Assuming an onEdit function 
           <FiEdit className="text-2xl text-gray-700" />
         </button>
       </div>
-
-      <h1 className="font-semibold text-4xl mb-8 text-center text-blue-600">
-        Loan Application Details
-      </h1>
 
       {/* Student Information Section */}
       <div className="mb-8">
@@ -78,11 +100,38 @@ function LoanDetails({ application, onEdit }) {  // Assuming an onEdit function 
 
       {/* Action Buttons */}
       <div className="flex justify-center space-x-4 mt-10">
-        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition transform hover:scale-105">
-          Approve Application
+        {/* Approve Button */}
+        <button
+          onClick={handleApprove}
+          className={`bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition transform hover:scale-105 flex justify-center w-60 ${
+            loadingApprove ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={loadingApprove} // Disable button when loading
+        >
+          {loadingApprove ? (
+            <>
+              <FaSpinner className="animate-spin mr-2" /> Approving...
+            </>
+          ) : (
+            'Approve Application'
+          )}
         </button>
-        <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition transform hover:scale-105">
-          Reject Application
+
+        {/* Reject Button */}
+        <button
+          onClick={handleReject}
+          className={`bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition transform hover:scale-105 flex justify-center w-60 ${
+            loadingReject ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={loadingReject} // Disable button when loading
+        >
+          {loadingReject ? (
+            <>
+              <FaSpinner className="animate-spin mr-2" /> Rejecting...
+            </>
+          ) : (
+            'Reject Application'
+          )}
         </button>
       </div>
     </div>

@@ -14,6 +14,9 @@ import LoanApp from "./Loan/LoanApp";
 import LoanAppList from "./Loan/LoanAppList";
 import LoanDetailsPage from "./Loan/LoanDeatilsPage";
 import EditLoanApplication from "./Loan/EditLoanApplication";
+import ViewBanks from "./Loan/ViewBanks";
+import AddNewBank from "./Loan/AddNewBank";
+import EditBank from "./Loan/EditBank";
 
 const App = () => {
   return (
@@ -28,6 +31,9 @@ const App = () => {
           <Route path="/loan-app-list" element={<LoanAppList />} />
           <Route path="/loan-app-view" element={<LoanDetailsPage />} />
           <Route path="/loan-app-edit" element={<EditLoanApplication />} />
+          <Route path="/bank-list" element={<ViewBanks />} />
+          <Route path="/bank-add" element={<AddNewBank />} />
+          <Route path="/bank-edit/:id" element={<EditBank />} /> {/* Route for editing a bank */}
         </Routes>
       </Router>
       <Footer />
