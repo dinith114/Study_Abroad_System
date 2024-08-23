@@ -1,273 +1,216 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
-import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
-import {
-  Card,
-  CardHeader,
-  Typography,
-  Button,
-  CardBody,
-  Chip,
-  CardFooter,
-  Avatar,
-  IconButton,
-  Tooltip,
-  Input,
-} from "@material-tailwind/react";
+import React, { useState } from "react";
+import { Modal, Button, Input, Checkbox, Select, Menu, Dropdown } from "antd";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
+const { Option } = Select;
 
-const TABLE_ROWS = [
+const initialData = [
   {
-    img: "https://docs.material-tailwind.com/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
+    key: "1",
+    date: "13th July 2024",
+    name: "Dinith Wickramasinghe",
+    mobile: "+94 715740136",
+    email: "dinith.gsw@gmail.com",
+    status: "Verified",
   },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
+  // Add more records as needed
 ];
 
-export function ParticipantList() {
-  return (
-    <Card className="h-full w-full">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <div>
-            <Typography variant="h5" color="blue-gray">
-              Recent Transactions
-            </Typography>
-          </div>
-          {/* <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
-            <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
-            </Button>
-          </div> */}
-        </div>
-      </CardHeader>
-      <div>
-        <CardBody className="overflow-scroll px-0">
-          <table className="w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {TABLE_ROWS.map(
-                (
-                  {
-                    img,
-                    name,
-                    amount,
-                    date,
-                    status,
-                    account,
-                    accountNumber,
-                    expiry,
-                  },
-                  index
-                ) => {
-                  const isLast = index === TABLE_ROWS.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
+const ParticipantList = () => {
+  const [data, setData] = useState(initialData);
+  const [visible, setVisible] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
-                  return (
-                    <tr key={name}>
-                      <td className={classes}>
-                        <div className="flex items-center gap-3">
-                          <Avatar
-                            src={img}
-                            alt={name}
-                            size="md"
-                            className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                          />
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold"
-                          >
-                            {name}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {amount}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {date}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <div className="w-max">
-                          <Chip
-                            size="sm"
-                            variant="ghost"
-                            value={status}
-                            color={
-                              status === "paid"
-                                ? "green"
-                                : status === "pending"
-                                ? "amber"
-                                : "red"
-                            }
-                          />
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                            <Avatar
-                              src={
-                                account === "visa"
-                                  ? "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png"
-                                  : "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/mastercard.png"
-                              }
-                              size="sm"
-                              alt={account}
-                              variant="square"
-                              className="h-full w-full object-contain p-1"
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal capitalize"
-                            >
-                              {account.split("-").join(" ")} {accountNumber}
-                            </Typography>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal opacity-70"
-                            >
-                              {expiry}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Edit User">
-                          <IconButton variant="text">
-                            <PencilIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
-        </CardBody>
+  const handleView = (record) => {
+    setSelectedRecord(record);
+    setVisible(true);
+  };
+
+  const handleConfirm = () => {
+    const updatedData = data.map((item) =>
+      item.key === selectedRecord.key ? { ...item, status: "Verified" } : item
+    );
+    setData(updatedData);
+    setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const columns = [
+    { title: "Date", dataIndex: "date", key: "date" },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Mobile", dataIndex: "mobile", key: "mobile" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Status", dataIndex: "status", key: "status" },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
+      render: (text, record) => (
+        <>
+          <Button type="default" onClick={() => handleView(record)}>
+            View
+          </Button>
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item key="1">Counselor 1</Menu.Item>
+                <Menu.Item key="2">Counselor 2</Menu.Item>
+                <Menu.Item key="3">Counselor 3</Menu.Item>
+                <Menu.Item key="4">Counselor 4</Menu.Item>
+                <Menu.Item key="5">Remove</Menu.Item>
+              </Menu>
+            }
+          >
+            <Button>
+              Assign <DownOutlined />
+            </Button>
+          </Dropdown>
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <div>
+        <h2 style={{ textAlign: "center", fontSize: "24px" }}>Participants</h2>
       </div>
-      {/* <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "20px",
+          marginTop: "60px",
+          marginLeft: "120px",
+        }}
+      >
+        <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+          <Select placeholder="Select Event" style={{ width: "200px" }}>
+            <Option value="event1">Australia Education Exhibition</Option>
+            <Option value="event2">New Zealand Education Exhibition</Option>
+            <Option value="event3">UK Education Exhibition</Option>
+            <Option value="event4">Canada Education Exhibition</Option>
+          </Select>
+          <Select placeholder="Sort by" style={{ width: "150px" }}>
+            <Option value="counselor1">Counselor 1</Option>
+            <Option value="counselor2">Counselor 2</Option>
+            <Option value="counselor3">Counselor 3</Option>
+            <Option value="counselor4">Counselor 4</Option>
+          </Select>
         </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
-      </CardFooter> */}
-    </Card>
+        <Input
+          placeholder="Search"
+          prefix={<SearchOutlined />}
+          style={{ width: "200px", marginRight: "50px" }}
+        />
+      </div>
+      <table
+        style={{ width: "95%", margin: "0 auto", borderCollapse: "collapse" }}
+      >
+        <thead>
+          <tr>
+            {columns.map((col) => (
+              <th
+                key={col.key}
+                style={{
+                  padding: "12px",
+                  borderBottom: "1px solid #ccc",
+                  backgroundColor: "#f0f0f0",
+                  textAlign: col.key === "actions" ? "right" : "left",
+                }}
+              >
+                {col.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row) => (
+            <tr key={row.key}>
+              <td style={{ padding: "12px", borderBottom: "1px solid #ccc" }}>
+                {row.date}
+              </td>
+              <td style={{ padding: "12px", borderBottom: "1px solid #ccc" }}>
+                {row.name}
+              </td>
+              <td style={{ padding: "12px", borderBottom: "1px solid #ccc" }}>
+                {row.mobile}
+              </td>
+              <td style={{ padding: "12px", borderBottom: "1px solid #ccc" }}>
+                {row.email}
+              </td>
+              <td
+                style={{
+                  padding: "12px",
+                  borderBottom: "1px solid #ccc",
+                  backgroundColor:
+                    row.status === "Verified" ? "green" : "transparent",
+                  color: row.status === "Verified" ? "white" : "black",
+                }}
+              >
+                {row.status}
+              </td>
+              <td
+                style={{
+                  padding: "12px",
+                  borderBottom: "1px solid #ccc",
+                  textAlign: "right",
+                }}
+              >
+                <Button type="default" onClick={() => handleView(row)}>
+                  View
+                </Button>
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item key="1">Counselor 1</Menu.Item>
+                      <Menu.Item key="2">Counselor 2</Menu.Item>
+                      <Menu.Item key="3">Counselor 3</Menu.Item>
+                      <Menu.Item key="4">Counselor 4</Menu.Item>
+                      <Menu.Item key="5">Remove</Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <Button>
+                    Assign <DownOutlined />
+                  </Button>
+                </Dropdown>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {selectedRecord && (
+        <Modal
+          title="Participant Details"
+          visible={visible}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <p>Event: {selectedRecord.event}</p>
+          <p>EvID: GR234</p>
+          <p>First Name: {selectedRecord.name.split(" ")[0]}</p>
+          <p>Last Name: {selectedRecord.name.split(" ")[1]}</p>
+          <p>Age: 25</p> {/* Replace with dynamic data if available */}
+          <p>City of Residence: Colombo</p> {/* Replace with dynamic data */}
+          <p>Email: {selectedRecord.email}</p>
+          <Checkbox>Email Confirmed</Checkbox>
+          <p>Mobile: {selectedRecord.mobile}</p>
+          <Checkbox>Mobile Confirmed</Checkbox>
+          <p>How did you hear about this event?</p>
+          <Input placeholder="Enter details" />
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <Button type="primary" onClick={handleConfirm}>
+              Confirm
+            </Button>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
-}
+};
+
+export default ParticipantList;
