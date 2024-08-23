@@ -8,7 +8,7 @@ import {
 import axios from "axios";
 import NavBar from "./Components/NavBar";
 import Footer from "./Components/Footer";
-import { ParticipantList } from "./Marketing/ParticipantList";
+import ParticipantList from "./Marketing/ParticipantList";
 import EventForm from "./Marketing/EventForm";
 import LoanApp from "./Loan/LoanApp";
 import LoanAppList from "./Loan/LoanAppList";
