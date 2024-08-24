@@ -1,5 +1,5 @@
 import React from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, SaveOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -36,11 +36,23 @@ const countries = [
   { label: "United States", value: "United States", flag: usFlag },
 ];
 
-function EventForm() {
+function EditEventForm() {
+  const handleCancel = () => {
+    // Logic for cancel action
+  };
+
+  const handleSave = () => {
+    // Logic for save changes
+  };
+
+  const handleDelete = () => {
+    // Logic for delete action
+  };
+
   return (
     <div>
       {/* Page Title */}
-      <PageTitle title="Create a new event" />
+      <PageTitle title="Edit Event" />
 
       <div style={{ padding: "20px", maxWidth: "1200px", margin: "auto" }}>
         <Form
@@ -49,6 +61,7 @@ function EventForm() {
             background: "#f5f5f5",
             padding: "40px",
             borderRadius: "10px",
+            position: "relative",
           }}
         >
           <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
@@ -59,8 +72,8 @@ function EventForm() {
               <Select
                 placeholder="Select Options"
                 style={{ width: "100%", height: "100%" }}
+                defaultValue="type2" // Set default value
               >
-                
                 <Select.Option value="type2">Virtual</Select.Option>
                 <Select.Option value="type3">Physical</Select.Option>
               </Select>
@@ -72,6 +85,7 @@ function EventForm() {
               <Input
                 placeholder="Enter event name"
                 style={{ height: "100%" }}
+                defaultValue="Event Name" // Set default value
               />
             </Form.Item>
             <Form.Item
@@ -81,6 +95,7 @@ function EventForm() {
               <DatePicker
                 style={{ width: "100%", height: "100%" }}
                 placeholder="Select date"
+                defaultValue={null} // Set default value
               />
             </Form.Item>
           </div>
@@ -90,13 +105,21 @@ function EventForm() {
               label={<b>Time</b>}
               style={{ flex: "1 1 30%", height: "64px" }} // Adjust height here
             >
-              <Input placeholder="Enter time" style={{ height: "100%" }} />
+              <Input
+                placeholder="Enter time"
+                style={{ height: "100%" }}
+                defaultValue="12:00 PM" // Set default value
+              />
             </Form.Item>
             <Form.Item
               label={<b>Location</b>}
               style={{ flex: "1 1 30%", height: "64px" }} // Adjust height here
             >
-              <Input placeholder="Enter location" style={{ height: "100%" }} />
+              <Input
+                placeholder="Enter location"
+                style={{ height: "100%" }}
+                defaultValue="Location Name" // Set default value
+              />
             </Form.Item>
             <Form.Item
               label={<b>Study level</b>}
@@ -109,8 +132,8 @@ function EventForm() {
                   gap: "20px",
                 }}
               >
-                <Checkbox>Undergraduate</Checkbox>
-                <Checkbox>Postgraduate</Checkbox>
+                <Checkbox defaultChecked>Undergraduate</Checkbox>
+                <Checkbox defaultChecked>Postgraduate</Checkbox>
                 <Checkbox>Doctorate</Checkbox>
                 <Checkbox>Diploma</Checkbox>
               </div>
@@ -118,7 +141,11 @@ function EventForm() {
           </div>
 
           <Form.Item label={<b>Description</b>}>
-            <TextArea placeholder="Enter the description" rows={4} />
+            <TextArea
+              placeholder="Enter the description"
+              rows={4}
+              defaultValue="Event description here" // Set default value
+            />
           </Form.Item>
 
           <div
@@ -130,6 +157,7 @@ function EventForm() {
                   <Checkbox
                     key={country.value}
                     value={country.value}
+                    defaultChecked // Set default checked state
                     style={{ flex: "1 1 30%" }}
                   >
                     <div style={{ display: "flex", alignItems: "center" }}>
@@ -175,68 +203,73 @@ function EventForm() {
                 </div>
               </Upload>
             </Form.Item>
-            <Form.Item label={<b>Institutions</b>} style={{ flex: "1 1 30%" }}>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-                {[...Array(8)].map((_, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      border: "1px solid #d9d9d9",
-                      borderRadius: "2px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      backgroundColor: "#fafafa",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Upload
-                      action="/upload.do"
-                      listType="picture-card"
-                      showUploadList={false}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: "absolute",
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <PlusOutlined
-                          style={{ fontSize: "16px", cursor: "pointer" }}
-                        />
-                      </div>
-                    </Upload>
-                  </div>
-                ))}
-              </div>
-              <Checkbox style={{ marginTop: "40px" }}>And more</Checkbox>
+            <Form.Item
+              label={<b>Institutions</b>}
+              style={{
+                flex: "1 1 30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Upload
+                action="/upload.do"
+                listType="picture-card"
+                showUploadList={true} // Ensure that the list is shown
+                style={{ width: "80px", height: "80px" }} // Reduced size
+              >
+                <div
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <PlusOutlined style={{ fontSize: "16px" }} />{" "}
+                  {/* Smaller icon */}
+                </div>
+              </Upload>
+              {/* <Checkbox style={{ marginTop: "20px" }}>And more</Checkbox>{" "} */}
+              {/* Adjusted margin */}
             </Form.Item>
           </div>
 
-          <Form.Item>
-            <Button type="primary" block>
-              Submit
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "20px",
+              gap: "10px",
+            }}
+          >
+            <Button
+              type="default"
+              style={{ backgroundColor: "#f8d7da", color: "#721c24" }}
+              icon={<PlusOutlined />}
+              onClick={handleCancel}
+            >
+              Cancel
             </Button>
-          </Form.Item>
+            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+              Save Changes
+            </Button>
+            <Button
+              type="default" // Set button type to default for grey color
+              style={{ backgroundColor: "#d3d3d3", color: "#000" }} // Grey color
+              icon={<DeleteOutlined />}
+              onClick={handleDelete}
+            >
+              Delete
+            </Button>
+          </div>
         </Form>
       </div>
     </div>
   );
 }
 
-export default EventForm;
+export default EditEventForm;
