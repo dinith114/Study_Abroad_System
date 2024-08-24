@@ -19,6 +19,10 @@ import EditLoanApplication from "./Loan/EditLoanApplication";
 import ViewBanks from "./Loan/ViewBanks";
 import AddNewBank from "./Loan/AddNewBank";
 import EditBank from "./Loan/EditBank";
+import AddStudent from "./StudentApplication/AddStudent";
+import EditStudent from "./StudentApplication/EditStudent";
+import StudentProfile from "./StudentApplication/StudentProfile";
+import StudentList from "./StudentApplication/StudentList";
 
 const App = () => {
   return (
@@ -38,7 +42,11 @@ const App = () => {
           <Route path="/bank-list" element={<ViewBanks />} />
           <Route path="/bank-add" element={<AddNewBank />} />
           <Route path="/bank-edit/:id" element={<EditBank />} />{" "}
-          {/* Route for editing a bank */}
+          {/* Route for editing a bank */} 
+          <Route path="/addStudent" element={<AddStudent />} />
+          <Route path="/editStudent" element={<EditStudent />} />
+          <Route path="/studentProfile" element={<StudentProfile />} />
+          <Route path="/studentList" element={<StudentList />} />
         </Routes>
       </Router>
       <Footer />
