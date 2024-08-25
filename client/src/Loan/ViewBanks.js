@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { useNavigate } from 'react-router-dom';
 import BankCard from './BankCard';
 import { FaSearch } from 'react-icons/fa';
 import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai';
 import PageTitle from '../Components/PageTitle';
+import BankDetailsModal from './BankDetailsModal'; 
 import BOC from '../Images/boc.png';
 import HNB from "../Images/hnb.png";
 import dfcc from "../Images/dfcc.jpg";
@@ -18,7 +19,7 @@ const banks = [
   { id: 2, name: 'HNB Bank', logo: HNB, rank: 2 },
   { id: 3, name: 'DFCC Bank', logo: dfcc, rank: 2 },
   { id: 4, name: 'Peoples Bank', logo: peoples, rank: 2 },
-  { id: 5, name: 'Seylan Bank', logo: BOC, rank: 2 },
+  { id: 5, name: 'Seylan Bank', logo: seylan, rank: 2 },
   { id: 6, name: 'NSB Bank', logo: nsb, rank: 2 },
   { id: 7, name: 'Pan Asia Bank', logo: panasia, rank: 2 },
   { id: 8, name: 'Sampath Bank', logo: sampath, rank: 2 },
@@ -26,14 +27,29 @@ const banks = [
 
 function ViewBanks() {
   const [selectedBank, setSelectedBank] = useState(null);
-  const navigate = useNavigate(); // Initialize the navigate hook
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleBankClick = (id) => {
-    setSelectedBank(id);
+  const handleViewClick = (bank) => {
+    setSelectedBank(bank);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedBank(null);
   };
 
   const handleEditClick = (id) => {
-    navigate(`/bank-edit/${id}`); // Navigate to the EditBank page with the bank's ID
+    navigate(`/bank-edit/${id}`);
+  };
+
+  const handleAddNewBankClick = () => {
+    navigate('/bank-add'); // Navigate to AddNewBank.js page
+  };
+
+  const handleApplicationListClick = () => {
+    navigate('/loan-app-list');
   };
 
   return (
@@ -54,11 +70,23 @@ function ViewBanks() {
               <FaSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
             </div>
 
-            <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+            {/* Add New Bank Button */}
+            <button
+              onClick={handleAddNewBankClick}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
+            >
               <span>Add new bank</span>
               <span className="bg-white text-blue-500 p-1 rounded-full">
                 <AiOutlinePlus className="w-4 h-4" />
               </span>
+            </button>
+
+            {/* Application List Button */}
+            <button
+              onClick={handleApplicationListClick}
+              className="bg-green-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
+            >
+              <span>Application List</span>
             </button>
           </div>
         </div>
@@ -70,8 +98,8 @@ function ViewBanks() {
                 bankName={bank.name}
                 rank={bank.rank}
                 logo={bank.logo}
-                isSelected={selectedBank === bank.id}
-                onClick={() => handleBankClick(bank.id)}
+                isSelected={selectedBank?.id === bank.id}
+                onViewClick={() => handleViewClick(bank)} // Open modal on button click
               />
               <button
                 onClick={() => handleEditClick(bank.id)}
@@ -83,6 +111,11 @@ function ViewBanks() {
           ))}
         </div>
       </div>
+
+      {/* Render the modal when `isModalOpen` is true */}
+      {isModalOpen && (
+        <BankDetailsModal bank={selectedBank} onClose={handleCloseModal} />
+      )}
     </div>
   );
 }

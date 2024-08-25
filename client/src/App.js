@@ -41,8 +41,8 @@ const App = () => {
           <Route path="/eventMainStudent" element={<EventMainStudent />} />
           <Route path="/eventRegister" element={<EventRegister/>} />
           <Route path="/loan-app-list" element={<LoanAppList />} />
-          <Route path="/loan-app-view" element={<LoanDetailsPage />} />
-          <Route path="/loan-app-edit" element={<EditLoanApplication />} />
+          <Route path="/loan-app-view/:id" element={<LoanDetailsPage />} />
+          <Route path="/loan-app-edit/:id" element={<EditLoanApplication />} />
           <Route path="/bank-list" element={<ViewBanks />} />
           <Route path="/bank-add" element={<AddNewBank />} />
           <Route path="/bank-edit/:id" element={<EditBank />} />{" "}
