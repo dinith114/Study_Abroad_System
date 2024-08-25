@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FaSave } from 'react-icons/fa'; // Import the save icon
+import { FaSave } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
-  // Default fallback values to prevent 'undefined' errors
+function EditLoanApplication({ studentId, applicationData = {}, onSubmit, onCancel }) {
+  const navigate = useNavigate();  // Initialize the navigate function
+
   const defaultData = {
     firstName: '',
     lastName: '',
@@ -15,7 +17,7 @@ function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
     university: '',
     program: '',
     programFee: '',
-    scholarshipAmount: '',
+    registrationFees: '',
     totalProgramFee: '',
     loanAmount: '',
     interestRate: '',
@@ -24,20 +26,17 @@ function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
     selectedBank: '',
   };
 
-  // Initialize formData with applicationData or defaultData
   const [formData, setFormData] = useState({ ...defaultData, ...applicationData });
 
-  // Update formData if applicationData changes
   useEffect(() => {
     setFormData({ ...defaultData, ...applicationData });
   }, [applicationData]);
 
-  // Auto-calculate monthly payment whenever loan amount, interest rate, or loan term changes
   useEffect(() => {
     const calculateMonthlyPayment = () => {
       const principal = parseFloat(formData.loanAmount) || 0;
       const interestRate = parseFloat(formData.interestRate) / 100 / 12 || 0;
-      const loanTerm = parseInt(formData.loanTerm) * 12 || 1; // assuming loanTerm is in years
+      const loanTerm = parseInt(formData.loanTerm) * 12 || 1;
       const monthlyPayment = principal * (interestRate * Math.pow(1 + interestRate, loanTerm)) / (Math.pow(1 + interestRate, loanTerm) - 1);
 
       setFormData((prevData) => ({
@@ -49,7 +48,6 @@ function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
     calculateMonthlyPayment();
   }, [formData.loanAmount, formData.interestRate, formData.loanTerm]);
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -58,10 +56,13 @@ function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({ ...formData, studentId });
+  };
+
+  const handleCancel = () => {
+    navigate('/loan-app-list'); // Navigate back to the LoanAppList page
   };
 
   return (
@@ -191,11 +192,11 @@ function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
             />
           </div>
           <div className="mb-5">
-            <label htmlFor="scholarshipAmount" className="block mb-2 text-sm font-medium text-gray-900">Scholarship Amount</label>
+            <label htmlFor="registrationFees" className="block mb-2 text-sm font-medium text-gray-900">Registration Fees</label>
             <input
               type="number"
-              name="scholarshipAmount"
-              value={formData.scholarshipAmount}
+              name="registrationFees"
+              value={formData.registrationFees}
               onChange={handleChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
             />
@@ -270,7 +271,7 @@ function EditLoanApplication({ applicationData = {}, onSubmit, onCancel }) {
         <div className="mt-6 flex justify-end">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}  // Use handleCancel to navigate back
             className="text-red-500 bg-transparent border border-red-500 hover:bg-red-500 hover:text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2"
           >
             Cancel

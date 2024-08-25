@@ -1,8 +1,13 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import LoanDetails from './LoanDetails';
 
 function LoanDetailsPage() {
+
+  const { id } = useParams();
+
   const application = {
+    id,
     firstName: 'John',
     lastName: 'Doe',
     address: '123 Main St, Cityville',
@@ -14,7 +19,7 @@ function LoanDetailsPage() {
     university: 'University of Example',
     program: 'Bachelor of Science',
     programFee: '500000',
-    scholarshipAmount: '100000',
+    registrationFees: '100000',
     totalProgramFee: '500000',
     totalLoanAmount: '400000',
     selectedBank: 'Bank of Ceylon'
