@@ -9,4 +9,6 @@ router.post('/add', createLoanApplication);
 // Get all loan applications
 router.get('/view-list', getLoanApplications);
 
+console.log("hi");
+
 module.exports = router;

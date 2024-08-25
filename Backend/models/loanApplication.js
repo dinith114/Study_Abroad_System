@@ -50,6 +50,8 @@ const loanApplicationSchema = new mongoose.Schema({
   },
 });
 
+console.log("hi");
+
 // Export the model
 const LoanApplication = mongoose.model('LoanApplication', loanApplicationSchema);
 module.exports = LoanApplication;

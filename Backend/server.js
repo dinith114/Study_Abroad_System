@@ -30,4 +30,6 @@ const todoSchema = new mongoose.Schema({
   completed: Boolean,
 });
 
+console.log("hi");
+
 app.use('/loan-applications', loanApplicationsRouter);
