@@ -1,6 +1,9 @@
-const app = require("express");
+const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const dotenv = require('dotenv');
+const loanApplicationsRouter = require('./routes/loanApplications');
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -8,11 +11,13 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-//connect to mongoDB
-mongoose.connect("mongodb://localhost/mern-stack-db", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// connect to mongoDB
+//mongoose.connect("mongodb://localhost/mern-stack-db");
+mongoose.connect(process.env.MONGO).then(() => {
+  console.log('Connected to MongoDB')
+}).catch((err) => {
+  console.log(err)
+})
 
 // define routes and middleware
 
@@ -25,10 +30,7 @@ const todoSchema = new mongoose.Schema({
   completed: Boolean,
 });
 
-const Todo = mongoose.model("Todo", todoSchema);
+console.log("hi");
+console.log("hi");
 
-// Add this to server.js
-app.get("/todos", async (req, res) => {
-  const todos = await Todo.find();
-  res.json(todos);
-});
+app.use('/loan-applications', loanApplicationsRouter);
