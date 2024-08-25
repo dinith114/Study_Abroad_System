@@ -23,6 +23,8 @@ import AddStudent from "./StudentApplication/AddStudent";
 import EditStudent from "./StudentApplication/EditStudent";
 import StudentProfile from "./StudentApplication/StudentProfile";
 import StudentList from "./StudentApplication/StudentList";
+import EventMainStudent from "./Marketing/EventMainStudent";
+import EventRegister from "./Marketing/EventRegister";
 
 const App = () => {
   return (
@@ -36,6 +38,8 @@ const App = () => {
           <Route path="/participantList" element={<ParticipantList />} />
           <Route path="/loan-app" element={<LoanApp />} />
           <Route path="/eventMain" element={<EventMain />} />
+          <Route path="/eventMainStudent" element={<EventMainStudent />} />
+          <Route path="/eventRegister" element={<EventRegister/>} />
           <Route path="/loan-app-list" element={<LoanAppList />} />
           <Route path="/loan-app-view" element={<LoanDetailsPage />} />
           <Route path="/loan-app-edit" element={<EditLoanApplication />} />
