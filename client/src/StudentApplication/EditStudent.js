@@ -1,403 +1,318 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AiOutlineCloudUpload, AiOutlineSave, AiOutlineClose } from 'react-icons/ai';
+import { Form, Input, Button, DatePicker, Select, Checkbox, Upload, message, Row, Col, Divider } from 'antd';
+import { UploadOutlined, PlusOutlined, SaveOutlined, DeleteOutlined, CloseOutlined} from '@ant-design/icons';
 import PageTitle from '../Components/PageTitle';
+import FormItem from 'antd/es/form/FormItem';
+/*import { AiOutlineCloudUpload, AiOutlineSave, AiOutlineClose } from 'react-icons/ai';*/
 
-function StudentRegistrationForm() {
-  const navigate = useNavigate(); // Hook for navigation
-  const [fullName, setFullName] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState(null);
-  const [age, setAge] = useState('');
-  const [nic, setNic] = useState('');
-  const [gender, setGender] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [educationLevel, setEducationLevel] = useState([]);
-  const [otherQualifications, setOtherQualifications] = useState('');
-  const [examStatus, setExamStatus] = useState('');
-  const [incomeLevel, setIncomeLevel] = useState('');
-  const [sponsorType, setSponsorType] = useState('');
-  const [preferredCourse, setPreferredCourse] = useState('');
-  const [preferredCountry, setPreferredCountry] = useState('');
-  const [preferredUniversity, setPreferredUniversity] = useState('');
-  const [error, setError] = useState('');
+const { Option } = Select;
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const validImageTypes = ['image/jpeg', 'image/png'];
-      if (!validImageTypes.includes(file.type)) {
-        setError('Please upload a valid image file (JPG or PNG)');
-        return;
+function EditStudent() {
+  const [form] = Form.useForm();
+  const [age, setAge] = useState(null);
+
+  // Handle Date of Birth change and calculate age
+  function handleDobChange(date) {
+    if (date) {
+      const today = new Date();
+      const birthDate = new Date(date);
+      
+      let currentAge = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        currentAge--;
       }
-      if (file.size > 5000000) { // Restrict to 5MB
-        setError('File size should not exceed 5MB');
-        return;
-      }
-      setSelectedImage(URL.createObjectURL(file));
-      setError('');
+
+      setAge(currentAge);
+      form.setFieldsValue({ age: currentAge });
+    } else {
+      setAge(null);
+      form.setFieldsValue({ age: '' });
     }
-  };
+  }
 
-  const handleSubmit = () => {
-    // Validation
-    if (
-      !fullName ||
-      !firstName ||
-      !lastName ||
-      !dob ||
-      !age ||
-      !nic ||
-      !gender ||
-      !email ||
-      !phone ||
-      !address ||
-      !educationLevel.length ||
-      !examStatus ||
-      !incomeLevel ||
-      !sponsorType ||
-      !preferredCourse ||
-      !preferredCountry ||
-      !preferredUniversity
-    ) {
-      setError('Please fill out all fields.');
-      return;
+  // Handle form submission
+  function onFinish(values) {
+    console.log('Received values:', values);
+  }
+
+  // Handle image upload
+  function onUpload(info) {
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
     }
+  }
 
-    if (isNaN(age)) {
-      setError('Age must be a number.');
-      return;
+  // Function to validate NIC number
+  function validateNic(_, value) {
+    const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/;
+    if (nicPattern.test(value)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(new Error('NIC must be 12 digits or 9 digits followed by V or v'));
     }
-
-    setError('');
-    console.log({
-      fullName,
-      firstName,
-      lastName,
-      dob,
-      age,
-      nic,
-      gender,
-      email,
-      phone,
-      address,
-      selectedImage,
-      educationLevel,
-      otherQualifications,
-      examStatus,
-      incomeLevel,
-      sponsorType,
-      preferredCourse,
-      preferredCountry,
-      preferredUniversity,
-    });
-
-    // Submit registration details (e.g., send to API)
-  };
-
-  const handleReset = () => {
-    setFullName('');
-    setFirstName('');
-    setLastName('');
-    setDob(null);
-    setAge('');
-    setNic('');
-    setGender('');
-    setEmail('');
-    setPhone('');
-    setAddress('');
-    setSelectedImage(null);
-    setEducationLevel([]);
-    setOtherQualifications('');
-    setExamStatus('');
-    setIncomeLevel('');
-    setSponsorType('');
-    setPreferredCourse('');
-    setPreferredCountry('');
-    setPreferredUniversity('');
-    setError('');
-  };
+  }
 
   const handleCancel = () => {
-    navigate('/student-list'); // Navigate back to the students list page or a specific route
+    // Logic for cancel action
   };
 
+  const handleSave = () => {
+    // Logic for save changes
+  };
+
+  const handleDelete = () => {
+    // Logic for delete action
+  };
+
+
   return (
-    <div className="my-3 p-8 rounded border border-gray-200 max-w-4xl mx-auto mt-10">
-      <PageTitle title="Student Registration Form" />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Student Registration</h1>
-      </div>
+    <div>
+      {/* Page Title */}
+      <PageTitle title="Edit Student Details" />
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <div style={{ padding: "30px", maxWidth: "1000px", margin: "auto" }}>
+        <Form
+          form={form}
+          name="student_registration"
+          onFinish={onFinish}
+          layout="vertical"
 
-      <div className="grid grid-cols-2 gap-6">
-        {/* Full Name */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Full Name</label>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+          style={{background: "#f5f5f5",
+            padding: "40px",
+            borderRadius: "10px",
+            position: "relative", 
+            /*width: '800px', margin: 'auto'*/}}
+        >
+          
+          <Row gutter={150}>
+          <Col span={16}>
+            {/* Personal Information Section */}
+            <Form.Item label={<b>Full Name</b>} name="fullName" rules={[{ required: true, message: 'Please enter your full name' }]}>
+              <Input placeholder="Enter full name" 
+               defaultValue="Full Name" /*Set default value*/ />
+            </Form.Item>
 
-        {/* First Name */}
-        <div>
-          <label className="block text-gray-700">First Name</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Form.Item label={<b>First Name</b>} name="firstName" rules={[{ required: true, message: 'Please enter your first name' }]}>
+              <Input placeholder="Enter first name" 
+                defaultValue="First Name"/>
+            </Form.Item>
 
-        {/* Last Name */}
-        <div>
-          <label className="block text-gray-700">Last Name</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Form.Item label={<b>Last Name</b>} name="lastName" rules={[{ required: true, message: 'Please enter your last name' }]}>
+              <Input placeholder="Enter last name"
+                defaultValue="Last Name"/>
+            </Form.Item>
 
-        {/* Date of Birth */}
-        <div>
-          <label className="block text-gray-700">Date of Birth</label>
-          <input
-            type="date"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Row gutter={30}>
+              <Col span={12}>
+                <Form.Item label={<b>Date of Birth</b>} name="dob" rules={[{ required: true, message: 'Please select your date of birth' }]}>
+                    <DatePicker style={{ width: '100%' }} onChange={handleDobChange} defaultValue={null} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label={<b>Age</b>} name="age">
+                  <Input value={age} readOnly placeholder="Age will be auto-calculated" />                  
+                </Form.Item>
+              </Col>
+            </Row>
 
-        {/* Age */}
-        <div>
-          <label className="block text-gray-700">Age</label>
-          <input
-            type="text"
-            value={age}
-            readOnly
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Form.Item label="NIC" name="nic"
+              rules={[
+                {
+                  required: true, 
+                  message: 'Please input your NIC number!',
+                },
+                {
+                  validator: validateNic,
+                },
+              ]}
+            >
+            <Input placeholder="Enter NIC number" />
+            </Form.Item>
 
-        {/* NIC */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">NIC</label>
-          <input
-            type="text"
-            value={nic}
-            onChange={(e) => setNic(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Form.Item label="Gender" name="gender" rules={[{ required: true, message: 'Please select your gender' }]}>
+              <Select placeholder="Select gender" defaultValue={'female'}>
+                <Option value="male">Male</Option>
+                <Option value="female">Female</Option>
+                {/*<Option value="other">Other</Option>*/}
+              </Select>
+            </Form.Item>
 
-        {/* Gender */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Gender</label>
-          <select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
+            <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}>
+              <Input placeholder="Enter email" defaultValue={'jaya123@gmail.com'}/>
+            </Form.Item>
 
-        {/* Email */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Form.Item label="Mobile Phone" name="phone" rules={[{ required: true, message: 'Please enter your phone number' }]}>
+              <Input placeholder="Enter mobile phone number" defaultValue={'0773456310'} />
+            </Form.Item>
 
-        {/* Mobile Phone */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Mobile Phone</label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+            <Form.Item label="Address" name="address">
+              <Input placeholder="Enter address" defaultValue={'101, Temple Road, Maharagama'}/>
+            </Form.Item>
+          </Col>
 
-        {/* Address */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Address</label>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Upload Image */}
-        <div className="col-span-2 flex flex-col items-center">
-          <label className="block text-gray-700">Upload Image</label>
-          <div className="flex flex-col items-center mt-2">
-            <div className="relative">
-              {selectedImage ? (
-                <img
-                  src={selectedImage}
-                  alt="Student"
-                  className="w-20 h-20 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="w-40 h-40 bg-gray-200 rounded-lg flex justify-center items-center">
-                  <AiOutlineCloudUpload size={24} className="text-gray-500" />
-                </div>
-              )}
+          <div style={{marginTop: '110px'}} >
+            <Col span={8}>
+            {/* Upload Image Section */}
+            <Form.Item name="upload" valuePropName="fileList">
+              <Upload
+                name="avatar"
+                listType="picture-card"
+                showUploadList={false}
+                onChange={onUpload}
+                action="/upload.do"
+              >
+                    <div
+                    style={{
+                      width: '200px',  // Outer square width
+                      height: '200px',  // Outer square height
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: '#f0f0f0',  // Optional background color for the square
+                    }}
+                  >
+                    <Button
+                      style={{ width: '80%' }}  // Button width as a percentage of the inner square
+                      icon={<UploadOutlined />}
+                    >
+                      Choose Image
+                    </Button>
+                  </div>
+                </Upload>
+              </Form.Item>
+              <div style={{ textAlign: 'center', marginTop:'60px' }}>Upload an Image</div>
+            </Col>
             </div>
-            <label className="bg-blue-500 text-white mt-2 px-4 py-2 rounded-lg cursor-pointer">
-              Upload
-              <input
-                type="file"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
-        </div>
+          </Row>
+          
+          <Divider orientation="center" style={{borderColor: 'black'}}>Education Level</Divider>
 
-        {/* Education Level */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Education Level</label>
-          <select
-            multiple
-            value={educationLevel}
-            onChange={(e) => setEducationLevel(Array.from(e.target.selectedOptions, option => option.value))}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
+          {/* Education Level Section */}
+          <Form.Item label={<b>Currently Completed</b>} name="educationLevel">
+            <Checkbox.Group>
+              <Checkbox defaultChecked value="oLevel">GCE(O/L)</Checkbox>
+              <Checkbox defaultChecked value="aLevel">GCE(A/L)</Checkbox>
+              <Checkbox value="diploma">Diploma</Checkbox>
+              <Checkbox value="bachelors">Bachelors</Checkbox>
+              <Checkbox value="masters">Masters</Checkbox>
+            </Checkbox.Group>
+          </Form.Item>
+
+          <Form.Item label={<b>Other Qualifications</b>} name="otherQualifications">
+            <Input.TextArea placeholder="Enter other educational details" rows={4} />
+          </Form.Item>
+
+          <Form.Item label={<b>IELTS/PTE Exam Status</b>} name="examStatus">
+            <Select placeholder="Select exam status" defaultValue={'completed'}>
+              <Option value="completed">Completed</Option>
+              <Option value="notCompleted">Not Completed</Option>
+            </Select>
+          </Form.Item>
+
+          <Divider orientation="center" style={{borderColor: 'black'}}>Financial Status</Divider>
+
+          {/* Financial Status Section */}
+          <Form.Item label="Income Level of Student" name="incomeLevel">
+            <Select placeholder="Select income level" defaultValue={'medium'}>
+              <Option value="low">Low</Option>
+              <Option value="medium">Medium</Option>
+              <Option value="high">High</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Financial Sponsor Type" name="sponsorType">
+            <Select placeholder="Select sponsor type" defaultValue={'parents'}>
+                <Option value="self">Self Sponsored</Option>
+                <Option value="parent">Parents</Option>
+                <Option value="sibling">Sibling</Option>
+                <Option value="other">Other</Option>
+            </Select>
+        </Form.Item>
+
+        <Divider orientation="center" style={{borderColor: 'black'}}>Study Preferences</Divider>
+
+          {/* Study Preferences Section */}
+        <Form.Item label="Preferred Course/Subject with Specialization" name="preferredCourse">
+            <Select placeholder="Enter preferred course or subject" defaultValue={'s&t'}>
+            <Option value="s&t">Science and Technology</Option>
+                <Option value="m&h">Medicine and Health</Option>
+                <Option value="b&m">Business and Management</Option>
+                <Option value="e&t">Engineering and Technology</Option>
+                <Option value="art">Art</Option>
+                <Option value="h&ss">Humanities and Social Science</Option>
+                <Option value="law">Law</Option>
+                <option value="education">Education</option>
+            </Select>
+        </Form.Item>
+
+          <Form.Item label="Preferred Country" name="preferredCountry">
+            <Select placeholder="Select country" defaultValue={'newZealand'}> 
+              <Option value="none">None</Option>
+              <Option value="australia">Australia</Option>
+              <Option value="canada">Canada</Option>
+              <Option value="newZeland">NewZealand</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Preferred University (if any)" name="preferredUniversity">
+            <Input placeholder="Enter preferred university" />
+          </Form.Item>
+
+          {/* Submit Button */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "20px",
+              gap: "10px",
+            }}
           >
-            <option value="highschool">High School</option>
-            <option value="bachelor">Bachelor's Degree</option>
-            <option value="master">Master's Degree</option>
-            <option value="phd">Ph.D.</option>
-          </select>
-        </div>
+            <Button
+              type="default"
+              style={{ backgroundColor: "#f8d7da", color: "#721c24" }}
+              icon={<PlusOutlined />}
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
 
-        {/* Other Qualifications */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Other Qualifications</label>
-          <textarea
-            value={otherQualifications}
-            onChange={(e) => setOtherQualifications(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Exam Status */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Exam Status</label>
-          <input
-            type="text"
-            value={examStatus}
-            onChange={(e) => setExamStatus(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Income Level */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Income Level</label>
-          <input
-            type="text"
-            value={incomeLevel}
-            onChange={(e) => setIncomeLevel(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Sponsor Type */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Sponsor Type</label>
-          <input
-            type="text"
-            value={sponsorType}
-            onChange={(e) => setSponsorType(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Preferred Course */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Preferred Course</label>
-          <input
-            type="text"
-            value={preferredCourse}
-            onChange={(e) => setPreferredCourse(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Preferred Country */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Preferred Country</label>
-          <input
-            type="text"
-            value={preferredCountry}
-            onChange={(e) => setPreferredCountry(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Preferred University */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Preferred University</label>
-          <input
-            type="text"
-            value={preferredUniversity}
-            onChange={(e) => setPreferredUniversity(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex justify-end mt-6">
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-4 flex items-center"
-        >
-          <AiOutlineSave className="mr-2" />
-          Save
-        </button>
-        <button
-          onClick={handleReset}
-          className="bg-red-500 text-white px-4 py-2 rounded-lg mr-4 flex items-center"
-        >
-          <AiOutlineClose className="mr-2" />
-          Reset
-        </button>
-        <button
-          onClick={handleCancel}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center"
-        >
-          <AiOutlineClose className="mr-2" />
-          Cancel
-        </button>
+            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+              Save Changes
+            </Button>
+            <Button
+              type="default" // Set button type to default for grey color
+              style={{ backgroundColor: "#d3d3d3", color: "#000" }} // Grey color
+              icon={<DeleteOutlined />}
+              onClick={handleDelete}
+            >
+              Delete
+            </Button>
+            <Button 
+      onClick={handleCancel} 
+      type="default" 
+      icon={<CloseOutlined />} 
+      style={{
+        backgroundColor: '#6b7280', // gray-500 equivalent
+        color: '#fff',
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      Cancel
+    </Button>
+          </div>
+      
+        </Form>
       </div>
     </div>
   );
 }
 
-export default StudentRegistrationForm;
+export default EditStudent;
 
 

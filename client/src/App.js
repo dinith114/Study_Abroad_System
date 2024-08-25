@@ -25,6 +25,7 @@ import StudentProfile from "./StudentApplication/StudentProfile";
 import StudentList from "./StudentApplication/StudentList";
 import EventMainStudent from "./Marketing/EventMainStudent";
 import EventRegister from "./Marketing/EventRegister";
+import RegisteredStudentList from "./StudentApplication/RegisteredStudentsList";
 
 const App = () => {
   return (
@@ -51,6 +52,7 @@ const App = () => {
           <Route path="/editStudent" element={<EditStudent />} />
           <Route path="/studentProfile" element={<StudentProfile />} />
           <Route path="/studentList" element={<StudentList />} />
+          <Route path="/registeredStudentList" element={<RegisteredStudentList />} />
         </Routes>
       </Router>
       <Footer />

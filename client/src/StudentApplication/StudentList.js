@@ -1,9 +1,26 @@
-import React from 'react';
-import { Table, Button, Input } from 'antd';
-import { SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Table, Button, Input, Dropdown, Menu } from 'antd';
+import { SearchOutlined, EditOutlined, DeleteOutlined, DownOutlined } from '@ant-design/icons';
 
-const StudentList = () => {
-  const columns = [
+function getStatusColor(status) {
+  switch (status) {
+    case 'Registered':
+      return '#d9d9d9'; // Grey
+    case 'Under Review':
+      return '#ffeb3b'; // Yellow
+    case 'Accepted':
+      return '#8bc34a'; // Light Green
+    case 'Finalized':
+      return '#388e3c'; // Dark Green
+    case 'Rejected':
+      return '#f44336'; // Red
+    default:
+      return '#d9d9d9'; // Default Grey
+  }
+}
+
+function getColumns(handleStatusChange) {
+  return [
     {
       title: 'Registration No.',
       dataIndex: 'registrationNo',
@@ -30,8 +47,24 @@ const StudentList = () => {
       title: 'Progress Status',
       dataIndex: 'status',
       key: 'status',
-      render: (status) => (
-        <Button style={{ backgroundColor: '#f5f5dc', borderColor: '#dcdcdc' }}>{status}</Button>
+      render: (status, record) => (
+        <Dropdown
+          overlay={getMenu(handleStatusChange, record.key)}
+          trigger={['click']}
+        >
+          <Button
+            style={{
+              backgroundColor: getStatusColor(status),
+              borderColor: '#dcdcdc',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              height: '40px',
+              width: '180px', // Fixed width for consistency
+            }}
+          >
+            {status} <DownOutlined />
+          </Button>
+        </Dropdown>
       ),
     },
     {
@@ -45,8 +78,25 @@ const StudentList = () => {
       ),
     },
   ];
+}
 
-  const data = [
+function getMenu(handleStatusChange, key) {
+  return (
+    <Menu
+      onClick={(e) => handleStatusChange(e, key)}
+      items={[
+        { key: 'Registered', label: 'Registered' },
+        { key: 'Under Review', label: 'Under Review' },
+        { key: 'Accepted', label: 'Accepted' },
+        { key: 'Finalized', label: 'Finalized' },
+        { key: 'Rejected', label: 'Rejected' },
+      ]}
+    />
+  );
+}
+
+function getData() {
+  return [
     {
       key: '1',
       registrationNo: '001',
@@ -65,6 +115,22 @@ const StudentList = () => {
     },
     // Add more student data here...
   ];
+}
+
+function StudentList() {
+  const [data, setData] = useState(getData());
+
+  const handleStatusChange = (e, key) => {
+    const newData = data.map((item) => {
+      if (item.key === key) {
+        return { ...item, status: e.key };
+      }
+      return item;
+    });
+    setData(newData);
+  };
+
+  const columns = getColumns(handleStatusChange);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -85,8 +151,6 @@ const StudentList = () => {
       />
     </div>
   );
-};
+}
 
 export default StudentList;
-
-
