@@ -1,0 +1,84 @@
+.table-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Table Wrapper for Scrollable Content */
+.table-wrapper {
+    max-height: 400px; /* Set a fixed height for the scrollable area */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #dee2e6; /* Optional: add a border to the scrollable area */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+/* Header and Cell Styles */
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+/* Sticky Header */
+th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-bottom: 1px solid #dee2e6;
+    position: sticky; /* Lock the header */
+    top: 0; /* Stick to the top of the container */
+    z-index: 1; /* Ensure the header is above the table content */
+}
+
+/* Alternate Row Backgrounds */
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Action Button Styles */
+.action-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 5px;
+}
+
+/* Specific Styles for Edit and Delete Buttons */
+.edit-btn {
+    color: #007bff;
+}
+
+.delete-btn {
+    color: #dc3545;
+}
+
+/* Add New University Button */
+.add-new-university {
+    display: block;
+    width: 25%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto 0; /* Adds top margin and centers the button */
+    text-align: center;
+}
+
+.add-new-university:hover {
+    background-color: #ccc;
+}
+
+.add-new-university:active {
+    background-color: #bbb;
+}
