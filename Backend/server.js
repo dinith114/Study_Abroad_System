@@ -31,5 +31,6 @@ const todoSchema = new mongoose.Schema({
 });
 
 console.log("hi");
+console.log("hi");
 
 app.use('/loan-applications', loanApplicationsRouter);

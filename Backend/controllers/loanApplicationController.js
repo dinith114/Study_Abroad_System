@@ -24,6 +24,7 @@ const getLoanApplications = async (req, res) => {
 };
 
 console.log("hi");
+console.log("hi");
 
 module.exports = {
   createLoanApplication,

@@ -10,5 +10,6 @@ router.post('/add', createLoanApplication);
 router.get('/view-list', getLoanApplications);
 
 console.log("hi");
+console.log("hi");
 
 module.exports = router;
