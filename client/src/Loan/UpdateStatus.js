@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-function UpdateStatus({ onClose, row }) {
+function UpdateStatus({ onClose, row, onStatusUpdate }) {
   const [status, setStatus] = useState(row.status);
   const [ticked, setTicked] = useState({
-    formCompleted: false,
-    documentsUploaded: false,
-    qualificationsCompleted: false,
-    approvalReceived: false,
-    mortgageProvided: false,
+    formCompleted: row.steps?.formCompleted || false,
+    documentsUploaded: row.steps?.documentsUploaded || false,
+    qualificationsCompleted: row.steps?.qualificationsCompleted || false,
+    approvalReceived: row.steps?.approvalReceived || false,
+    mortgageProvided: row.steps?.mortgageProvided || false,
   });
 
   const handleCheckboxChange = (event) => {
@@ -24,19 +25,34 @@ function UpdateStatus({ onClose, row }) {
     setStatus(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (status === 'Approve' && !canApprove) {
       alert('Please complete all the steps before approving.');
       return;
     }
-    // Save the updated status logic here
-    onClose();
+
+    try {
+      // Update the status and steps on the server
+      await axios.put(`http://localhost:5000/loan-applications/update/${row._id}`, {
+        status: status,
+        steps: ticked
+      });
+
+      // Inform parent component about the status update
+      onStatusUpdate({ ...row, status: status, steps: ticked });
+
+      console.log('Status updated successfully');
+      onClose();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status');
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Update Status for {row.id}</h2>
+        <h2 className="text-xl font-bold mb-4">Update Status for {row.studentId}</h2>
         
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">

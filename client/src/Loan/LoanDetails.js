@@ -2,31 +2,19 @@ import React, { useState } from 'react';
 import { FiPrinter, FiEdit } from 'react-icons/fi';
 import { FaSpinner } from 'react-icons/fa'; // Import spinner icon
 import PageTitle from '../Components/PageTitle';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 function LoanDetails({ application, onEdit }) {
   const [loadingApprove, setLoadingApprove] = useState(false); // State for Approve loading
   const [loadingReject, setLoadingReject] = useState(false); // State for Reject loading
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handlePrint = () => {
     window.print();
   };
 
-  const handleApprove = () => {
-    setLoadingApprove(true); // Start loading
-    // Simulate an API call or some asynchronous task
-    setTimeout(() => {
-      alert('Application Approved!');
-      setLoadingApprove(false); // Stop loading
-    }, 2000); // Simulate 2 seconds delay
-  };
-
-  const handleReject = () => {
-    setLoadingReject(true); // Start loading
-    // Simulate an API call or some asynchronous task
-    setTimeout(() => {
-      alert('Application Rejected!');
-      setLoadingReject(false); // Stop loading
-    }, 2000); // Simulate 2 seconds delay
+  const handleBackToList = () => {
+    navigate('/loan-app-list'); // Use absolute path for navigation
   };
 
   return (
@@ -100,37 +88,19 @@ function LoanDetails({ application, onEdit }) {
 
       {/* Action Buttons */}
       <div className="flex justify-center space-x-4 mt-10">
-        {/* Approve Button */}
         <button
-          onClick={handleApprove}
-          className={`bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition transform hover:scale-105 flex justify-center w-60 ${
-            loadingApprove ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={loadingApprove} // Disable button when loading
-        >
-          {loadingApprove ? (
-            <>
-              <FaSpinner className="animate-spin mr-2" /> Approving...
-            </>
-          ) : (
-            'Approve Application'
-          )}
-        </button>
-
-        {/* Reject Button */}
-        <button
-          onClick={handleReject}
-          className={`bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition transform hover:scale-105 flex justify-center w-60 ${
+          onClick={handleBackToList} // Call handleBackToList on click
+          className={`bg-grNavTextHov hover:bg-grNavText text-white px-6 py-3 rounded-lg transition transform hover:scale-105 flex justify-center w-60 ${
             loadingReject ? 'opacity-50 cursor-not-allowed' : ''
           }`}
           disabled={loadingReject} // Disable button when loading
         >
           {loadingReject ? (
             <>
-              <FaSpinner className="animate-spin mr-2" /> Rejecting...
+              <FaSpinner className="animate-spin mr-2" /> Loading...
             </>
           ) : (
-            'Reject Application'
+            'Back to list'
           )}
         </button>
       </div>

@@ -1,121 +1,162 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BankCard from './BankCard';
-import { FaSearch } from 'react-icons/fa';
-import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai';
+import { Card, Row, Col, Button, Input, Typography, Modal } from 'antd'; // Ensure Modal is imported from 'antd'
+import { FaSearch, FaEye, FaEdit, FaTrash } from 'react-icons/fa'; // Import icons from react-icons/fa
+import { AiOutlinePlus } from 'react-icons/ai'; // Import AiOutlinePlus from react-icons/ai
 import PageTitle from '../Components/PageTitle';
-import BankDetailsModal from './BankDetailsModal'; 
-import BOC from '../Images/boc.png';
-import HNB from "../Images/hnb.png";
-import dfcc from "../Images/dfcc.jpg";
-import peoples from "../Images/peoples.png";
-import seylan from "../Images/seylan.jpg";
-import nsb from "../Images/nsb.png";
-import panasia from "../Images/panasia.jpg";
-import sampath from "../Images/sampath.jpg";
+import axios from 'axios';
+import ViewBankDetails from './ViewBankDetails'; // Import the ViewBankDetails component
 
-const banks = [
-  { id: 1, name: 'Bank of Ceylon', logo: BOC, rank: 2 },
-  { id: 2, name: 'HNB Bank', logo: HNB, rank: 2 },
-  { id: 3, name: 'DFCC Bank', logo: dfcc, rank: 2 },
-  { id: 4, name: 'Peoples Bank', logo: peoples, rank: 2 },
-  { id: 5, name: 'Seylan Bank', logo: seylan, rank: 2 },
-  { id: 6, name: 'NSB Bank', logo: nsb, rank: 2 },
-  { id: 7, name: 'Pan Asia Bank', logo: panasia, rank: 2 },
-  { id: 8, name: 'Sampath Bank', logo: sampath, rank: 2 },
-];
+const { Title } = Typography;
+const { confirm } = Modal; // Use Modal from Ant Design
 
 function ViewBanks() {
+  const [banks, setBanks] = useState([]);
   const [selectedBank, setSelectedBank] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch banks from the API
+    axios.get('http://localhost:5000/banks/list')
+      .then(response => {
+        setBanks(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching banks:', error);
+      });
+  }, []);
+
   const handleViewClick = (bank) => {
     setSelectedBank(bank);
-    setIsModalOpen(true);
+    setIsModalOpen(true); // Open the modal
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedBank(null);
+    setIsModalOpen(false); // Close the modal
+    setSelectedBank(null); // Clear the selected bank
   };
 
-  const handleEditClick = (id) => {
-    navigate(`/bank-edit/${id}`);
+  const handleEditClick = (bankId) => {
+    navigate(`/bank-edit/${bankId}`); // Navigate to the edit page
   };
 
   const handleAddNewBankClick = () => {
-    navigate('/bank-add'); // Navigate to AddNewBank.js page
+    navigate('/bank-add');
   };
 
   const handleApplicationListClick = () => {
     navigate('/loan-app-list');
   };
 
+  const handleDeleteClick = (id) => {
+    confirm({
+      title: 'Are you sure you want to delete this bank?',
+      content: 'This action cannot be undone.',
+      okText: 'Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk() {
+        axios.delete(`http://localhost:5000/banks/delete/${id}`)
+          .then(() => {
+            setBanks(banks.filter(bank => bank._id !== id)); // Refresh the list after deletion
+          })
+          .catch(error => {
+            console.error('Error deleting bank:', error);
+          });
+      },
+    });
+  };
+
   return (
-    <div className="my-3 p-8 rounded border border-gray-200 lg:mx-10">
+    <div className="p-6 bg-gray-100 min-h-screen">
       <PageTitle title="Manage Banks" />
 
-      <div className="p-8 lg:mx-10">
+      <div className="p-6 bg-white rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Available Banks</h1>
+          <Title level={2}>Available Banks</Title>
 
           <div className="flex space-x-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search banks"
-                className="border border-gray-300 rounded-lg px-4 py-2 pl-10"
-              />
-              <FaSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
-            </div>
+            <Input
+              placeholder="Search banks"
+              prefix={<FaSearch className="text-gray-500" />}
+              className="w-64"
+            />
 
-            {/* Add New Bank Button */}
-            <button
+            <Button
+              type="primary"
+              icon={<AiOutlinePlus />}
               onClick={handleAddNewBankClick}
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
+              className="flex items-center space-x-2"
             >
               <span>Add new bank</span>
-              <span className="bg-white text-blue-500 p-1 rounded-full">
-                <AiOutlinePlus className="w-4 h-4" />
-              </span>
-            </button>
+            </Button>
 
-            {/* Application List Button */}
-            <button
+            <Button
+              type="primary"
+              style={{ backgroundColor: 'green', borderColor: 'green' }}
               onClick={handleApplicationListClick}
-              className="bg-green-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
+              className="flex items-center space-x-2"
             >
               <span>Application List</span>
-            </button>
+            </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Row gutter={[16, 16]}>
           {banks.map((bank) => (
-            <div key={bank.id} className="relative">
-              <BankCard
-                bankName={bank.name}
-                rank={bank.rank}
-                logo={bank.logo}
-                isSelected={selectedBank?.id === bank.id}
-                onViewClick={() => handleViewClick(bank)} // Open modal on button click
-              />
-              <button
-                onClick={() => handleEditClick(bank.id)}
-                className="absolute top-2 right-2 bg-gray-200 hover:bg-gray-300 text-gray-700 p-1 rounded-full"
-              >
-                <AiOutlineEdit className="w-5 h-5" />
-              </button>
-            </div>
+            <Col key={bank._id} xs={24} sm={12} md={8} lg={6}>
+              <Card className="flex flex-col items-center text-center shadow-md">
+                <div className="flex justify-center py-4">
+                  <img
+                    alt={bank.bankName}
+                    src={bank.bankIcon}
+                    className="h-24 w-auto object-contain"
+                  />
+                </div>
+                <div className="py-4">
+                  <Title level={4} className="mb-1">{bank.bankName}</Title>
+                  <p className="text-gray-500">Rank: {bank.rank}</p>
+                  <p className="text-gray-500">Interest Rate: {bank.interestRate}%</p>
+                  <p className="text-gray-500">Max Loan: Rs.{bank.maxLoan}.00</p>
+                  <p className="text-gray-500">Repayment Period: {bank.repaymentPeriod} months</p>
+                </div>
+                <div className="flex space-x-4 mt-4">
+                  <Button
+                    type="link"
+                    icon={<FaEdit />}
+                    onClick={() => handleEditClick(bank._id)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="link"
+                    icon={<FaEye />}
+                    onClick={() => handleViewClick(bank)}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    type="default"
+                    danger
+                    icon={<FaTrash />}
+                    onClick={() => handleDeleteClick(bank._id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </Card>
+            </Col>
           ))}
-        </div>
+        </Row>
       </div>
 
-      {/* Render the modal when `isModalOpen` is true */}
-      {isModalOpen && (
-        <BankDetailsModal bank={selectedBank} onClose={handleCloseModal} />
-      )}
+      {/* Modal for bank details */}
+      <ViewBankDetails
+        bank={selectedBank}
+        isVisible={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
