@@ -1,291 +1,212 @@
-import React, { useState, useEffect } from 'react';
-import { FaSave } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, DatePicker, Select, Typography, Modal } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import { motion } from 'framer-motion';
+import PageTitle from '../Components/PageTitle';
 
-function EditLoanApplication({ studentId, applicationData = {}, onSubmit, onCancel }) {
-  const navigate = useNavigate();  // Initialize the navigate function
+const { Title } = Typography;
+const { Option } = Select;
 
-  const defaultData = {
-    firstName: '',
-    lastName: '',
-    address: '',
-    email: '',
-    phoneNumber: '',
-    gender: '',
-    dateOfBirth: '',
-    nic: '',
-    university: '',
-    program: '',
-    programFee: '',
-    registrationFees: '',
-    totalProgramFee: '',
-    loanAmount: '',
-    interestRate: '',
-    loanTerm: '',
-    monthlyPayment: '',
-    selectedBank: '',
-  };
+const EditLoanApplication = () => {
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  const [formData, setFormData] = useState({ ...defaultData, ...applicationData });
+  const [universities, setUniversities] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
 
   useEffect(() => {
-    setFormData({ ...defaultData, ...applicationData });
-  }, [applicationData]);
+    const fetchData = async () => {
+      try {
+        // Uncomment these lines when the API is ready
+        // const universitiesData = await axios.get('/api/universities');
+        // const banksData = await axios.get('/api/banks');
+        // setUniversities(universitiesData.data);
+        // setBanks(banksData.data);
 
-  useEffect(() => {
-    const calculateMonthlyPayment = () => {
-      const principal = parseFloat(formData.loanAmount) || 0;
-      const interestRate = parseFloat(formData.interestRate) / 100 / 12 || 0;
-      const loanTerm = parseInt(formData.loanTerm) * 12 || 1;
-      const monthlyPayment = principal * (interestRate * Math.pow(1 + interestRate, loanTerm)) / (Math.pow(1 + interestRate, loanTerm) - 1);
+        const response = await axios.get(`http://localhost:5000/loan-applications/view/${id}`);
+        const loanApplication = response.data;
 
-      setFormData((prevData) => ({
-        ...prevData,
-        monthlyPayment: isNaN(monthlyPayment) ? 0 : monthlyPayment.toFixed(2),
-      }));
+        setPrograms(loanApplication.programs || []);
+        form.setFieldsValue({
+          ...loanApplication,
+          birthDate: dayjs(loanApplication.birthDate),
+        });
+        setSelectedUniversity(loanApplication.university);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
-    calculateMonthlyPayment();
-  }, [formData.loanAmount, formData.interestRate, formData.loanTerm]);
+    fetchData();
+  }, [id, form]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleUniversityChange = value => {
+    setSelectedUniversity(value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit({ ...formData, studentId });
+  const handleProgramChange = value => {
+    const selectedProgram = programs.find(prog => prog.id === value);
+    if (selectedProgram) {
+      form.setFieldsValue({
+        totalProgramFee: selectedProgram.totalFee,
+        registrationFee: selectedProgram.registrationFee,
+        totalLoanAmount: selectedProgram.totalLoanAmount,
+      });
+    }
+  };
+
+  const handleSubmit = async values => {
+    Modal.confirm({
+      title: 'Are you sure you want to update the application?',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          const formattedValues = {
+            ...values,
+            birthDate: values.birthDate.format('YYYY-MM-DD'),
+          };
+          await axios.put(`http://localhost:5000/loan-applications/update/${id}`, formattedValues);
+          navigate('/loan-app-list');
+        } catch (error) {
+          console.error('Error updating loan application:', error);
+        }
+      },
+    });
   };
 
   const handleCancel = () => {
-    navigate('/loan-app-list'); // Navigate back to the LoanAppList page
+    Modal.confirm({
+      title: 'Are you sure you want to cancel?',
+      content: 'Any unsaved changes will be lost.',
+      okText: 'Yes, Cancel',
+      cancelText: 'No',
+      onOk: () => {
+        navigate('/loan-app-list');
+      },
+    });
   };
 
   return (
-    <div className="mt-3 p-8 rounded border border-gray-200 lg:mx-40 bg-white">
-      <h1 className="font-medium text-3xl mb-6 text-center bg-blue-100 p-5 rounded-lg text-grNavTextHov">Edit Loan Application</h1>
-
-      <form onSubmit={handleSubmit}>
-        {/* Main Grid Layout */}
-        <div className="grid lg:grid-cols-2 gap-x-20">
-          {/* Student Information Section */}
-          <h2 className="col-span-2 font-medium text-xl mb-4">Student Information</h2>
-          <div className="mb-5">
-            <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-gray-900">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="lastName" className="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-900">Address</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="phoneNumber" className="block mb-2 text-sm font-medium text-gray-900">Phone Number</label>
-            <input
-              type="text"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900">Gender</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
+    <div className="my-3 p-8 rounded border border-gray-200 lg:mx-10">
+      <PageTitle title="Edit Loan Application" />
+      <div className="bg-gray-50 min-h-screen flex flex-col items-center p-8">
+        <div className="flex flex-col md:flex-row w-full max-w-7xl">
+          <div className="w-full p-4">
+            <Form
+              form={form}
+              onFinish={handleSubmit}
+              layout="vertical"
+              className="bg-white p-10 rounded-xl shadow-lg"
             >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div className="mb-5">
-            <label htmlFor="dateOfBirth" className="block mb-2 text-sm font-medium text-gray-900">Date of Birth</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="nic" className="block mb-2 text-sm font-medium text-gray-900">NIC</label>
-            <input
-              type="text"
-              name="nic"
-              value={formData.nic}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
+              <Title level={2} className="text-2xl font-bold text-gray-800 mb-6">
+                Student Information
+              </Title>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Form.Item name="studentId" label="Student ID" rules={[{ required: true }]}>
+                  <Input placeholder="Student ID" />
+                </Form.Item>
+                <Form.Item name="firstName" label="First Name" rules={[{ required: true }]}>
+                  <Input placeholder="First Name" />
+                </Form.Item>
+                <Form.Item name="lastName" label="Last Name" rules={[{ required: true }]}>
+                  <Input placeholder="Last Name" />
+                </Form.Item>
+                <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+                  <Input placeholder="Address" />
+                </Form.Item>
+                <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
+                  <Input placeholder="Email" />
+                </Form.Item>
+                <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true }]}>
+                  <Input placeholder="Phone Number" />
+                </Form.Item>
+                <Form.Item name="birthDate" label="Birth Date" rules={[{ required: true }]}>
+                  <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+                </Form.Item>
+                <Form.Item name="nic" label="NIC Number" rules={[{ required: true }]}>
+                  <Input placeholder="NIC Number" />
+                </Form.Item>
+              </div>
 
-          {/* Academic Information Section */}
-          <h2 className="col-span-2 font-medium text-xl mb-4">Academic Information</h2>
-          <div className="mb-5">
-            <label htmlFor="university" className="block mb-2 text-sm font-medium text-gray-900">University</label>
-            <input
-              type="text"
-              name="university"
-              value={formData.university}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="program" className="block mb-2 text-sm font-medium text-gray-900">Program</label>
-            <input
-              type="text"
-              name="program"
-              value={formData.program}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="programFee" className="block mb-2 text-sm font-medium text-gray-900">Program Fee</label>
-            <input
-              type="number"
-              name="programFee"
-              value={formData.programFee}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="registrationFees" className="block mb-2 text-sm font-medium text-gray-900">Registration Fees</label>
-            <input
-              type="number"
-              name="registrationFees"
-              value={formData.registrationFees}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="totalProgramFee" className="block mb-2 text-sm font-medium text-gray-900">Total Program Fee</label>
-            <input
-              type="number"
-              name="totalProgramFee"
-              value={formData.totalProgramFee}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
+              <Title level={2} className="text-2xl font-bold text-gray-800 mb-6 mt-10">
+                Course Information
+              </Title>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Form.Item name="university" label="University" rules={[{ required: true }]}>
+                  <Select placeholder="Select University" onChange={handleUniversityChange}>
+                    {universities.map(uni => (
+                      <Option key={uni.id} value={uni.id}>
+                        {uni.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item name="program" label="Program" rules={[{ required: true }]}>
+                  <Select
+                    placeholder="Select Program"
+                    onChange={handleProgramChange}
+                    disabled={!selectedUniversity}
+                  >
+                    {programs.map(prog => (
+                      <Option key={prog.id} value={prog.id}>
+                        {prog.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item name="totalProgramFee" label="Total Program Fee">
+                  <Input placeholder="Total Program Fee" disabled />
+                </Form.Item>
+                <Form.Item name="registrationFee" label="Registration Fee">
+                  <Input placeholder="Registration Fee" disabled />
+                </Form.Item>
+                <Form.Item name="totalLoanAmount" label="Total Loan Amount">
+                  <Input placeholder="Total Loan Amount" disabled />
+                </Form.Item>
+              </div>
 
-          {/* Loan Information Section */}
-          <h2 className="col-span-2 font-medium text-xl mb-4">Loan Information</h2>
-          <div className="mb-5">
-            <label htmlFor="loanAmount" className="block mb-2 text-sm font-medium text-gray-900">Loan Amount</label>
-            <input
-              type="number"
-              name="loanAmount"
-              value={formData.loanAmount}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="interestRate" className="block mb-2 text-sm font-medium text-gray-900">Interest Rate (%)</label>
-            <input
-              type="number"
-              name="interestRate"
-              value={formData.interestRate}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="loanTerm" className="block mb-2 text-sm font-medium text-gray-900">Loan Term (Years)</label>
-            <input
-              type="number"
-              name="loanTerm"
-              value={formData.loanTerm}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="monthlyPayment" className="block mb-2 text-sm font-medium text-gray-900">Monthly Payment</label>
-            <input
-              type="number"
-              name="monthlyPayment"
-              value={formData.monthlyPayment}
-              onChange={handleChange}
-              readOnly
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
-          </div>
-          <div className="mb-5">
-            <label htmlFor="selectedBank" className="block mb-2 text-sm font-medium text-gray-900">Selected Bank</label>
-            <input
-              type="text"
-              name="selectedBank"
-              value={formData.selectedBank}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5"
-            />
+              <Form.Item
+                name="selectedBank"
+                label="Select Bank"
+                rules={[{ required: true, message: 'Please select a bank' }]}
+              >
+                <Select placeholder="Select a Bank">
+                  {banks.map(bank => (
+                    <Option key={bank.id} value={bank.name}>
+                      {bank.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <div className="flex justify-between mt-6">
+                <motion.button
+                  type="button"
+                  onClick={handleCancel}
+                  className="bg-red-500 text-white py-2 px-16 rounded-full text-lg font-semibold shadow-lg"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.1 }}
+                  className="bg-grNavTextHov hover:bg-grNavText text-white py-2 px-8 rounded-full text-lg font-semibold shadow-lg"
+                >
+                  Update Application
+                </motion.button>
+              </div>
+            </Form>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={handleCancel}  // Use handleCancel to navigate back
-            className="text-red-500 bg-transparent border border-red-500 hover:bg-red-500 hover:text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="text-white bg-blue-500 hover:bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center"
-          >
-            <FaSave className="mr-2" /> Save Changes
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
-}
+};
 
 export default EditLoanApplication;

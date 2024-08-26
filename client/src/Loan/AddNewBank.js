@@ -1,250 +1,165 @@
 import React, { useState } from 'react';
-import { AiOutlineCloudUpload, AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import PageTitle from '../Components/PageTitle';
+import { Form, Input, InputNumber, Button, Upload, Select, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
-function AddNewBank() {
-  const [bankName, setBankName] = useState('');
-  const [interestRate, setInterestRate] = useState('');
-  const [rank, setRank] = useState('');
-  const [loanAmount, setLoanAmount] = useState('');
-  const [maxLoan, setMaxLoan] = useState('');
-  const [repaymentPeriod, setRepaymentPeriod] = useState('');
-  const [purpose, setPurpose] = useState('');
-  const [eligibility, setEligibility] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [error, setError] = useState('');
+const { TextArea } = Input;
+const { Option } = Select;
 
-  const navigate = useNavigate(); // Create navigate function
+const AddNewBank = () => {
+  const [form] = Form.useForm();
+  const [fileList, setFileList] = useState([]);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const validImageTypes = ['image/jpeg', 'image/png'];
-      if (!validImageTypes.includes(file.type)) {
-        setError('Please upload a valid image file (JPG or PNG)');
-        return;
-      }
-      if (file.size > 5000000) { // Restrict to 5MB
-        setError('File size should not exceed 5MB');
-        return;
-      }
-      setSelectedImage(URL.createObjectURL(file));
-      setError('');
-    }
+  const handleFileChange = ({ fileList }) => {
+    setFileList(fileList); // This will manage the file state correctly
   };
 
-  const handleSubmit = () => {
-    // Validation
-    if (
-      !bankName ||
-      !interestRate ||
-      !rank ||
-      !loanAmount ||
-      !maxLoan ||
-      !repaymentPeriod ||
-      !purpose ||
-      !eligibility ||
-      !selectedImage
-    ) {
-      setError('Please fill out all fields and upload an image.');
-      return;
-    }
-
-    if (isNaN(interestRate) || isNaN(rank) || isNaN(loanAmount) || isNaN(maxLoan)) {
-      setError('Interest Rate, Rank, Loan Amount, and Maximum Loan should be numbers.');
-      return;
-    }
-
-    setError('');
-    console.log({
-      bankName,
-      interestRate,
-      rank,
-      loanAmount,
-      maxLoan,
-      repaymentPeriod,
-      purpose,
-      eligibility,
-      selectedImage,
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    Object.keys(values).forEach((key) => {
+      if (key === 'bankIcon') {
+        formData.append(key, values[key]?.file?.originFileObj); // Correctly append file to FormData
+      } else {
+        formData.append(key, values[key]);
+      }
     });
 
-    // Clear form (optional)
-    handleReset();
-  };
-
-  const handleReset = () => {
-    setBankName('');
-    setInterestRate('');
-    setRank('');
-    setLoanAmount('');
-    setMaxLoan('');
-    setRepaymentPeriod('');
-    setPurpose('');
-    setEligibility('');
-    setSelectedImage(null);
-    setError('');
-  };
-
-  const handleCancel = () => {
-    navigate(-1); // Navigate back to the previous page
+    try {
+      const response = await axios.post('http://localhost:5000/banks/add', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      message.success('Bank added successfully!');
+      form.resetFields();
+      setFileList([]);
+    } catch (error) {
+      message.error('Failed to add bank. Please try again.');
+    }
   };
 
   return (
-    <div className="my-3 p-8 rounded border border-gray-200 max-w-4xl mx-auto mt-10">
-      {/* Page Title */}
-      <PageTitle title="Add new Bank" />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Bank Details</h1>
-      </div>
+    <div className="p-8 max-w-lg mx-auto bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold mb-6 text-center">Add New Bank</h2>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        className="space-y-6"
+      >
+        <Form.Item
+          name="bankName"
+          label="Bank Name"
+          rules={[{ required: true, message: 'Please enter the bank name' }]}
+        >
+          <Input placeholder="Enter bank name" />
+        </Form.Item>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-
-      <div className="grid grid-cols-2 gap-6">
-        {/* Bank Name */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Bank Name</label>
-          <input
-            type="text"
-            value={bankName}
-            onChange={(e) => setBankName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
+        <Form.Item
+          name="interestRate"
+          label="Interest Rate"
+          rules={[{ required: true, message: 'Please enter the interest rate' }]}
+        >
+          <InputNumber
+            min={0}
+            max={100}
+            step={0.01}
+            placeholder="Enter interest rate"
+            className="w-full"
           />
-        </div>
+        </Form.Item>
 
-        {/* Annual Interest Rate */}
-        <div>
-          <label className="block text-gray-700">Annual interest rate</label>
-          <input
-            type="text"
-            value={interestRate}
-            onChange={(e) => setInterestRate(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+        <Form.Item
+          name="rank"
+          label="Rank"
+          rules={[{ required: true, message: 'Please enter the rank' }]}
+        >
+          <InputNumber min={1} placeholder="Enter rank" className="w-full" />
+        </Form.Item>
 
-        {/* Rank */}
-        <div>
-          <label className="block text-gray-700">Rank</label>
-          <input
-            type="text"
-            value={rank}
-            onChange={(e) => setRank(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+        <Form.Item
+          name="maxLoan"
+          label="Max Loan Amount"
+          rules={[{ required: true, message: 'Please enter the max loan amount' }]}
+        >
+          <InputNumber min={0} placeholder="Enter max loan amount" className="w-full" />
+        </Form.Item>
 
-        {/* Select bank icon image */}
-        <div className="col-span-2 flex flex-col items-center">
-          <label className="block text-gray-700">Select bank icon image</label>
-          <div className="flex flex-col items-center mt-2">
-            <div className="relative">
-              {selectedImage ? (
-                <img
-                  src={selectedImage}
-                  alt="Bank Icon"
-                  className="w-20 h-20 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="w-20 h-20 bg-gray-200 rounded-lg flex justify-center items-center">
-                  <AiOutlineCloudUpload size={24} className="text-gray-500" />
-                </div>
-              )}
-            </div>
-            <label className="bg-blue-500 text-white mt-2 px-4 py-2 rounded-lg cursor-pointer">
-              Upload
-              <input
-                type="file"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
-        </div>
+        <Form.Item
+          name="repaymentPeriod"
+          label="Repayment Period (months)"
+          rules={[{ required: true, message: 'Please enter the repayment period' }]}
+        >
+          <InputNumber min={0} placeholder="Enter repayment period" className="w-full" />
+        </Form.Item>
 
-        {/* Loan Amount */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Loan Amount</label>
-          <input
-            type="text"
-            value={loanAmount}
-            onChange={(e) => setLoanAmount(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+        <Form.Item
+          name="purpose"
+          label="Purpose"
+          rules={[{ required: true, message: 'Please enter the purpose' }]}
+        >
+          <TextArea rows={3} placeholder="Enter purpose of the loan" />
+        </Form.Item>
 
-        {/* Maximum Loan */}
-        <div>
-          <label className="block text-gray-700">Maximum Loan</label>
-          <input
-            type="text"
-            value={maxLoan}
-            onChange={(e) => setMaxLoan(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+        <Form.Item
+          name="documentsRequired"
+          label="Documents Required"
+          rules={[{ required: true, message: 'Please enter the documents required' }]}
+        >
+          <Select mode="tags" placeholder="Enter documents required">
+            <Option value="ID Proof">ID Proof</Option>
+            <Option value="Address Proof">Address Proof</Option>
+            <Option value="Income Proof">Income Proof</Option>
+          </Select>
+        </Form.Item>
 
-        {/* Repayment Period */}
-        <div>
-          <label className="block text-gray-700">Repayment Period</label>
-          <input
-            type="text"
-            value={repaymentPeriod}
-            onChange={(e) => setRepaymentPeriod(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-          <span className="text-sm text-gray-500 mt-1 inline-block">Months</span>
-        </div>
+        <Form.Item
+          name="eligiblePersons"
+          label="Eligible Persons"
+          rules={[{ required: true, message: 'Please enter the eligible persons' }]}
+        >
+          <Select mode="tags" placeholder="Enter eligible persons">
+            <Option value="Salaried">Salaried</Option>
+            <Option value="Self-employed">Self-employed</Option>
+            <Option value="Student">Student</Option>
+          </Select>
+        </Form.Item>
 
-        {/* Purpose of loan */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Purpose of loan</label>
-          <input
-            type="text"
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
+        <Form.Item
+          name="benefits"
+          label="Benefits"
+          rules={[{ required: true, message: 'Please enter the benefits' }]}
+        >
+          <Select mode="tags" placeholder="Enter benefits">
+            <Option value="Low Interest Rate">Low Interest Rate</Option>
+            <Option value="Flexible Repayment">Flexible Repayment</Option>
+          </Select>
+        </Form.Item>
 
-        {/* Eligibility */}
-        <div className="col-span-2">
-          <label className="block text-gray-700">Eligibility</label>
-          <input
-            type="text"
-            value={eligibility}
-            onChange={(e) => setEligibility(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2"
-          />
-        </div>
-
-        {/* Add, Reset, and Cancel Buttons */}
-        <div className="flex justify-end col-span-2 space-x-4 mt-4">
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
+        <Form.Item
+          name="bankIcon"
+          label="Bank Icon"
+          rules={[{ required: true, message: 'Please upload the bank icon' }]}
+        >
+          <Upload
+            name="bankIcon"
+            listType="picture"
+            beforeUpload={() => false} // Prevent automatic upload
+            onChange={handleFileChange}
+            fileList={fileList}
           >
-            <AiOutlinePlus className="w-4 h-4" />
-            <span>Add New Bank</span>
-          </button>
-          <button
-            onClick={handleReset}
-            className="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
-          >
-            <AiOutlineClose className="w-4 h-4" />
-            <span>Reset</span>
-          </button>
-          <button
-            onClick={handleCancel}
-            className="bg-red-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2"
-          >
-            <AiOutlineClose className="w-4 h-4" />
-            <span>Cancel</span>
-          </button>
-        </div>
-      </div>
+            <Button icon={<UploadOutlined />}>Upload Bank Icon</Button>
+          </Upload>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" className="w-full">
+            Add Bank
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
-}
+};
 
 export default AddNewBank;

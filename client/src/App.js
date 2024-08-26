@@ -31,6 +31,7 @@ import Course from "./Partnership/Course";
 import CourseTable from "./Partnership/CourseTable";
 import PartnershipTable from "./Partnership/PartnershipTable";
 
+import LoanAppView from "./Loan/LoanAppView";
 
 const App = () => {
   return (
@@ -47,7 +48,7 @@ const App = () => {
           <Route path="/eventMainStudent" element={<EventMainStudent />} />
           <Route path="/eventRegister" element={<EventRegister/>} />
           <Route path="/loan-app-list" element={<LoanAppList />} />
-          <Route path="/loan-app-view/:id" element={<LoanDetailsPage />} />
+          <Route path="/loan-app-view/:id" element={<LoanAppView />} />
           <Route path="/loan-app-edit/:id" element={<EditLoanApplication />} />
           <Route path="/bank-list" element={<ViewBanks />} />
           <Route path="/bank-add" element={<AddNewBank />} />
