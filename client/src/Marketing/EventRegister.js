@@ -1,10 +1,67 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
+import axios from 'axios';
+import { useLocation, useNavigate } from "react-router-dom";
 import { Card, Tag, Form, Input, Button, Select } from "antd";
 import Eventpic1 from "../Images/event1.jpg"; // Update this to match the banner image in your screenshot
 // import Logo1 from "../Images/logo1.png"; // Update these to match the logos in your screenshot
 // import Logo2 from "../Images/logo2.png";
 
 const EventRegister = () => {
+  const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
+  const queryParams = new URLSearchParams(location.search); // Parse the query parameters
+  const id = queryParams.get("id");
+
+  const [eventlist,setEventList] = useState([]);
+
+useEffect(()=>{
+  viewEvents();
+},[])
+
+const viewEvents=async()=>{
+  let response = await axios.get(
+    `http://localhost:5000/event/viewOneEvent/${id}`
+  );
+  console.log("response", response.data);
+  setEventList(response.data);
+  console.log("eventlist.coverImage", eventlist.coverImage);
+}
+
+
+const onFinish = async (values) => {
+  console.log("hii");
+  console.log("values", values);
+  const formData = new FormData();
+  // Append normal form fields
+  Object.keys(values).forEach((key) => {
+    if (Array.isArray(values[key])) {
+      formData.append(key, JSON.stringify(values[key])); // Convert array to JSON string
+    } else {
+      formData.append(key, values[key]);
+    }
+  });
+
+  console.log("formData", formData);
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/eventRegister/createRegisterEvent",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("Response:", response.data);
+    navigate(`/participantList?id=${response.data._id}`); // Redirect after update
+  } catch (error) {
+    console.error("Error updating data:", error);
+  }
+};
+
+
+
+
   return (
     <div
       style={{
@@ -39,7 +96,7 @@ const EventRegister = () => {
         >
           <img
             alt="Event Banner"
-            src={Eventpic1} // Update this to your banner image
+            src={eventlist.coverImage} // Update this to your banner image
             style={{
               width: "100%",
               height: "100%",
@@ -61,7 +118,7 @@ const EventRegister = () => {
               borderRadius: "10px",
             }}
           >
-            Physical
+            {eventlist.eventType}
           </Tag>
 
           {/* Title overlay */}
@@ -76,16 +133,14 @@ const EventRegister = () => {
               margin: 0,
             }}
           >
-            Australia Education
-            <br />
-            Exhibition
+            {eventlist.eventName}
           </h1>
         </div>
 
         {/* Event Details Card */}
         <Card
           title={
-            <span style={{ fontSize: "24px", fontWeight: "bold" }}>
+            <span style={{ fontSize: "30px", fontWeight: "bold" }}>
               Event Details
             </span>
           }
@@ -105,11 +160,11 @@ const EventRegister = () => {
             </h3>
             <p style={{ fontSize: "16px", margin: "0" }}>Date & time</p>
             <p style={{ color: "#1890ff", fontSize: "16px", margin: "0" }}>
-              13th Sep 2024, 10:30 AM - 2:00 PM
+              {eventlist.eventDate}, {eventlist.eventTime}
             </p>
             <p style={{ fontSize: "16px", margin: "10px 0 0" }}>Location</p>
             <p style={{ color: "#1890ff", fontSize: "16px", margin: "0" }}>
-              Cinnamon Grand Colombo
+              {eventlist.location}
             </p>
           </div>
           <div>
@@ -117,13 +172,7 @@ const EventRegister = () => {
               Featured study levels
             </h3>
             <Tag color="blue" style={{ margin: "0 5px" }}>
-              Undergraduate
-            </Tag>
-            <Tag color="blue" style={{ margin: "0 5px" }}>
-              Postgraduate
-            </Tag>
-            <Tag color="blue" style={{ margin: "0 5px" }}>
-              Doctorate
+              {eventlist.studyLevel}
             </Tag>
           </div>
           <div>
@@ -131,8 +180,7 @@ const EventRegister = () => {
               About this event
             </h3>
             <p style={{ fontSize: "16px", margin: "0" }}>
-              Join us on September 13th for an exciting opportunity to explore
-              study options in Australia.
+              {eventlist.discription}
             </p>
           </div>
           <div>
@@ -140,17 +188,7 @@ const EventRegister = () => {
               Participating institutions
             </h3>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {/* <img
-                src={Logo1} // Update this to your institution logo 1
-                alt="Institution 1"
-                style={{ width: "60px", borderRadius: "5px" }}
-              />
-              <img
-                src={Logo2} // Update this to your institution logo 2
-                alt="Institution 2"
-                style={{ width: "60px", borderRadius: "5px" }}
-              /> */}
-              {/* Add more logos as needed */}
+              {eventlist.institutions}
             </div>
           </div>
         </Card>
@@ -185,44 +223,117 @@ const EventRegister = () => {
         >
           <Form
             layout="vertical"
+            onFinish={onFinish}
             style={{ flex: "1", display: "flex", flexDirection: "column" }}
           >
-            <Form.Item label="First name" style={{ marginBottom: "15px" }}>
-              <Input placeholder="Enter your first name" />
+            <Form.Item
+              label="First name"
+              name="firstName"
+              style={{ marginBottom: "15px" }}
+              rules={[
+                { required: true, message: "Please enter your first name!" },
+                {
+                  pattern: /^[A-Za-z]+$/,
+                  message: "First name cannot contain numbers or symbols!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter your first name" name="firstName" />
             </Form.Item>
-            <Form.Item label="Last name" style={{ marginBottom: "15px" }}>
-              <Input placeholder="Enter your last name" />
+            <Form.Item
+              label="Last name"
+              name="lastName"
+              style={{ marginBottom: "15px" }}
+              rules={[
+                { required: true, message: "Please enter your last name!" },
+                {
+                  pattern: /^[A-Za-z]+$/,
+                  message: "Last name cannot contain numbers or symbols!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter your last name" name="lastName" />
             </Form.Item>
-            <Form.Item label="Age" style={{ marginBottom: "15px" }}>
-              <Input placeholder="Enter your age" />
+            <Form.Item
+              label="Age"
+              name="age"
+              style={{ marginBottom: "15px" }}
+              rules={[
+                { required: true, message: "Please enter your age!" },
+                {
+                  type: "number",
+                  min: 16,
+                  message: "Age must be at least 16!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter your age" name="age" />
             </Form.Item>
             <Form.Item
               label="Your City of Residence"
               style={{ marginBottom: "15px" }}
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter your city of residence!",
+                },
+              ]}
             >
-              <Input placeholder="Enter your city of residence" />
+              <Input
+                placeholder="Enter your city of residence"
+                name="address"
+              />
             </Form.Item>
-            <Form.Item label="Email" style={{ marginBottom: "15px" }}>
-              <Input placeholder="Enter your email" />
+            <Form.Item
+              label="Email"
+              name="email"
+              style={{ marginBottom: "15px" }}
+              rules={[
+                { required: true, message: "Please enter your email!" },
+                { type: "email", message: "Please enter a valid email!" },
+              ]}
+            >
+              <Input placeholder="Enter your email" name="email" />
             </Form.Item>
-            <Form.Item label="Mobile number" style={{ marginBottom: "15px" }}>
-              <Input placeholder="Enter your mobile number" addonBefore="+94" />
+            <Form.Item
+              label="Mobile number"
+              name="phone"
+              style={{ marginBottom: "15px" }}
+              rules={[
+                { required: true, message: "Please enter your mobile number!" },
+                {
+                  pattern: /^\d{9}$/,
+                  message:
+                    "Mobile number must be 9 digits and cannot contain letters!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="Enter your mobile number"
+                addonBefore="+94"
+                name="phone"
+              />
             </Form.Item>
             <Form.Item
               label="How did you hear about this event?"
               style={{ marginBottom: "15px" }}
+              name="aboutEvent"
+              rules={[{ required: true, message: "Please select an option!" }]}
             >
-              <Select placeholder="Select an option">
+              <Select placeholder="Select an option" name="aboutEvent">
                 <Select.Option value="social_media">Social Media</Select.Option>
                 <Select.Option value="friend">Friend</Select.Option>
                 <Select.Option value="other">Other</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item label="Captcha" style={{ marginBottom: "15px" }}>
-              <Input placeholder="Enter the captcha" />
-            </Form.Item>
             <Form.Item style={{ marginTop: "auto" }}>
-              <Button type="primary" block style={{ height: "40px" }}>
+              <Button
+                type="primary"
+                block
+                style={{ height: "40px" }}
+                htmlType="submit"
+              >
                 Submit
               </Button>
             </Form.Item>
