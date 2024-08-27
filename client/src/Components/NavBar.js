@@ -48,12 +48,16 @@ function NavBar() {
               Programs
               {isProgramsOpen && (
                 <ul className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-md w-48 z-50">
+                  <Link to="./course-table">
                   <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                     View Courses
                   </li>
+                  </Link>
+                  <Link to="./course">
                   <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                     Add Courses
                   </li>
+                  </Link>
                 </ul>
               )}
             </li>
@@ -72,9 +76,11 @@ function NavBar() {
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Application Process
                   </li>
+                  <Link to="./partnership-form">
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Partnerships
                   </li>
+                  </Link>
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Loan Advisory
                   </li>

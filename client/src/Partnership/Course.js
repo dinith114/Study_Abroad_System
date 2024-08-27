@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
+import { Link } from "react-router-dom";
 
 const courseLevels = [
   { value: "undergraduate", label: "Undergraduate" },
@@ -22,6 +23,16 @@ const currencyOptions = [
   // Add more currencies as needed
 ];
 
+// const Course = () => {
+
+//   const navigate = useNavigate();
+
+//   const handleAddNewCourse = () => {
+//     navigate('/course-table');
+//   }
+
+// };
+
 const Course = () => {
   const [formData, setFormData] = useState({
     universityName: "",
@@ -32,6 +43,9 @@ const Course = () => {
     intake: "",
     courseLevel: null,
     courseType: null,
+
+
+
   });
 
   const handleChange = (e) => {
@@ -57,8 +71,10 @@ const Course = () => {
     console.log(formData);
   };
 
+
   return (
     <div className="form-container">
+      <h2 className="form-headline">ADD NEW COURSE</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
@@ -156,10 +172,11 @@ const Course = () => {
             />
           </div>
         </div>
-
-        <button type="submit" className="submit-btn">
+          <Link to='/course-table'>
+        <button className="submit-btn">
           ADD
         </button>
+        </Link>
       </form>
     </div>
   );

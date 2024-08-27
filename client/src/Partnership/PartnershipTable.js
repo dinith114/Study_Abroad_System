@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import './PartnershipTable.css';
 
 
@@ -27,41 +28,22 @@ const universities = [
     type: "Public",
     flag: "🇨🇦",
   },
-  {
-    name: "The University of Edinburgh",
-    country: "England",
-    address: "Edinburgh, Scotland, United Kingdom",
-    founded: "1583",
-    type: "Public",
-    flag: "🇬🇧",
-  },
-  {
-    name: "University of Auckland",
-    country: "New Zealand",
-    address: "Auckland, North Island, New Zealand",
-    founded: "1883",
-    type: "Public",
-    flag: "🇳🇿",
-  },
-  {
-    name: "Ohio State University",
-    country: "United States",
-    address: "Columbus, Ohio, United States",
-    founded: "1870",
-    type: "Public",
-    flag: "🇺🇸",
-  },
-  {
-    name: "Ohio State University",
-    country: "United States",
-    address: "Columbus, Ohio, United States",
-    founded: "1870",
-    type: "Public",
-    flag: "🇺🇸",
-  },
+  
 ];
 
 const PartnershipTable = () => {
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  const handleAddNewUniversity = () => {
+    navigate('/partnership-form'); // Navigate to the PartnershipForm page
+  };
+
+  const handleUpdateUniversity = () => {
+    navigate('/update-partnership'); // Navigate to the PartnershipForm page
+  };
+
+
   return (
     <div className="table-container">
         <h2 className="table-headline">PARTNERSHIP DETAILS</h2>
@@ -86,7 +68,7 @@ const PartnershipTable = () => {
               <td>{uni.type}</td>
               <td>
               <td>
-                  <button className="edit-button">✏️</button>
+                  <button className="edit-button" onClick={handleUpdateUniversity}>✏️</button>
                   <button className="delete-button">🗑️</button>
                 </td>
               </td>
@@ -94,7 +76,7 @@ const PartnershipTable = () => {
           ))}
         </tbody>
       </table>
-      <button className="add-new-university">Add New University</button>
+      <button className="add-new-university" onClick={handleAddNewUniversity}>Add New University</button>
     </div>
   );
 };

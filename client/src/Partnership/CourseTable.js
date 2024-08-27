@@ -1,5 +1,6 @@
 import React from 'react';
 import './CourseTable.css';
+import { Link } from "react-router-dom";
 
 const courses = [
   {
@@ -87,15 +88,24 @@ const CourseTable = () => {
                 <td>{course.courseLevel}</td>
                 <td>{course.courseType}</td>
                 <td>
-                  <button className="edit-button">✏️</button>
+                  <Link to='/update-course'>
+                  <button className="edit-button">
+                    ✏️
+                  </button>
+                  </Link>
                   <button className="delete-button">🗑️</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+       
       </div>
-      <button className="add-course-button">ADD NEW COURSES</button>
+      <Link to='/course'>
+      <button className="add-course-button">
+        ADD NEW COURSES
+      </button>
+      </Link>
     </div>
   );
 };

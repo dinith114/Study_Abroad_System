@@ -31,6 +31,9 @@ import PartnershipForm from "./Partnership/PartnershipForm";
 import Course from "./Partnership/Course";
 import CourseTable from "./Partnership/CourseTable";
 import PartnershipTable from "./Partnership/PartnershipTable";
+import UpdatePartnership from "./Partnership/UpdatePartnership";
+import UpdateCourse from "./Partnership/UpdateCourse";
+import ViewPartnerships from "./Partnership/ViewPartnerships";
 
 import LoanAppView from "./Loan/LoanAppView";
 
@@ -66,6 +69,9 @@ const App = () => {
           <Route path="/course" element={<Course />} />
           <Route path="/course-table" element={<CourseTable />} />
           <Route path="/partnership-table" element={<PartnershipTable />} />
+          <Route path="/update-partnership" element={<UpdatePartnership />} />
+          <Route path="/update-course" element={<UpdateCourse />} />
+          <Route path="/view-partnerships" element={<ViewPartnerships />} />
         </Routes>
       </Router>
       <Footer />

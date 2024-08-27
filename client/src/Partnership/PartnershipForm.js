@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import Flag from "react-world-flags";
+import { useNavigate } from "react-router-dom";
 import "./PartnershipForm.css";
 
 const countryOptions = [
@@ -11,6 +12,14 @@ const countryOptions = [
 ];
 
 const PartnershipForm = () => {
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  const handleAddNewUniversity = () => {
+    navigate('/partnership-table'); // Navigate to the PartnershipForm page
+  };
+
+
   const [formData, setFormData] = useState({
     universityName: "",
     ranking: "",
@@ -125,9 +134,7 @@ const PartnershipForm = () => {
             placeholder="Enter Address"
           />
         </div>
-        <button type="submit" className="submit-btn">
-          ADD
-        </button>
+        <button className="submit-btn" onClick={handleAddNewUniversity}>ADD</button>
       </form>
     </div>
   );
