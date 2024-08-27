@@ -1,0 +1,123 @@
+/* src/Modal.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's above other content */
+  animation: fadeIn 0.4s ease;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  padding: 40px; /* Increased padding for more spacious content */
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  animation: scaleUp 0.4s ease, slideUp 0.4s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+  border: 1px solid #ddd; /* Light border for subtle definition */
+  background: linear-gradient(135deg, #ffffff, #f8f9fa); /* Subtle gradient background */
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #ff4d4d; /* Red button for a strong visual cue */
+  border: none;
+  border-radius: 50%;
+  width: 50px; /* Larger button for easier clicking */
+  height: 50px; /* Larger button for easier clicking */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px; /* Larger icon for better visibility */
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+}
+
+.modal-close:hover {
+  background: #ff1a1a; /* Darker red on hover */
+  transform: scale(1.1); /* Slightly enlarge button on hover */
+}
+
+.modal-body {
+  margin-top: 30px;
+  font-size: 18px; /* Larger font size for better readability */
+  line-height: 1.6; /* Increased line height for better spacing */
+  color: #333; /* Darker text for better readability */
+}
+
+.modal-body h2, .modal-body h3 {
+  font-size: 22px; /* Larger headings for emphasis */
+  margin-bottom: 20px;
+  color: #222; /* Slightly darker headings */
+}
+
+.modal-body p {
+  margin: 12px 0;
+  color: #555; /* Slightly lighter text color */
+}
+
+.modal-footer {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.modal-footer button {
+  background: #007bff; /* Blue button for primary actions */
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.modal-footer button:hover {
+  background: #0056b3; /* Darker blue on hover */
+  transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
