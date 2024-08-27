@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import axios from "axios";
+import ReactDOM from "react-dom";
 import NavBar from "./Components/NavBar";
 import Footer from "./Components/Footer";
 import ParticipantList from "./Marketing/ParticipantList";

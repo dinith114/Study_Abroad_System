@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Button,
@@ -13,6 +13,10 @@ import {
 } from "antd";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import PageTitle from "../Components/PageTitle";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+
 
 const { Option } = Select;
 
@@ -45,6 +49,26 @@ const initialData = [
 ];
 
 const ParticipantList = () => {
+
+   const navigate = useNavigate();
+   const [eventRegisterData, setEventRegisterData] = useState([]);
+   
+  useEffect(() => {
+    viewRegisterEvent();
+  }, []);
+
+  const viewRegisterEvent = async () => {
+    let response = await axios.get(
+      `http://localhost:5000/eventRegister/viewRegisterEvent`
+    );
+    console.log("response", response.data);
+    setEventRegisterData(response.data);
+    console.log("eventRegisterData", eventRegisterData);
+  };
+
+
+
+
   const [data, setData] = useState(initialData);
   const [visible, setVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -52,17 +76,28 @@ const ParticipantList = () => {
   const [assignments, setAssignments] = useState({});
   const [appointmentTime, setAppointmentTime] = useState(null);
   const [appointmentDate, setAppointmentDate] = useState(null);
+  const [status,setStatus] =useState(false)
 
-  const handleView = (record) => {
-    setSelectedRecord(record);
+  const handleView = async(id) => {
+    console.log("record",id)
+   let response = await axios.get(
+     `http://localhost:5000/eventRegister/viewOneRegisterEvent/${id}`
+   );
+    console.log("response", response.data);
+    setSelectedRecord(response.data);
     setVisible(true);
   };
 
   const handleConfirm = () => {
-    const updatedData = data.map((item) =>
-      item.key === selectedRecord.key ? { ...item, status: "Verified" } : item
-    );
-    setData(updatedData);
+  //   const updatedData = eventRegisterData.map((item) =>{
+  // console.log("item", item);
+  //  console.log("selectedRecord", selectedRecord);
+  //     return item.key === selectedRecord.key ? { ...item, status: "Verified" } : item;
+  //   }
+      
+  //   );
+  setStatus(true);
+    // setData(updatedData);
     setVisible(false);
   };
 
@@ -196,12 +231,22 @@ const ParticipantList = () => {
         <div className="flex justify-between items-center mt-8 mb-4 px-12">
           <div className="flex space-x-4">
             <Select placeholder="Select Event" style={{ width: "200px" }}>
-              <Option value="event1">Australia Education Exhibition</Option>
-              <Option value="event2">New Zealand Education Exhibition</Option>
-              <Option value="event3">UK Education Exhibition</Option>
-              <Option value="event4">Canada Education Exhibition</Option>
+              <Option value="Select Event">Select Event</Option>
+              <Option value="Australia Education Exhibition">
+                Australia Education Exhibition
+              </Option>
+              <Option value="New Zealand Education Exhibition">
+                New Zealand Education Exhibition
+              </Option>
+              <Option value="UK Education Exhibition">
+                UK Education Exhibition
+              </Option>
+              <Option value="Canada Education Exhibition">
+                Canada Education Exhibition
+              </Option>
             </Select>
             <Select placeholder="Sort by" style={{ width: "150px" }}>
+              <Option value="Sort by">Sort by </Option>
               <Option value="counselor1">Counselor 1</Option>
               <Option value="counselor2">Counselor 2</Option>
               <Option value="counselor3">Counselor 3</Option>
@@ -237,11 +282,14 @@ const ParticipantList = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((row) => (
+              {eventRegisterData.map((row) => (
                 <tr key={row.key} className="bg-white border-b">
-                  <td className="px-6 py-4">{row.date}</td>
-                  <td className="px-6 py-4">{row.name}</td>
-                  <td className="px-6 py-4">{row.mobile}</td>
+                  <td className="px-6 py-4">{row.createdAt}</td>
+                  <td className="px-6 py-4">
+                    {row.firstName}
+                    {row.lastName}
+                  </td>
+                  <td className="px-6 py-4">{row.phone}</td>
                   <td className="px-6 py-4">{row.email}</td>
                   <td className={`px-6 py-4 text-center`}>
                     <span
@@ -256,7 +304,10 @@ const ParticipantList = () => {
                   </td>
                   <td className="px-4 py-4 text-center">
                     <div className="flex space-x-4 justify-center">
-                      <Button type="default" onClick={() => handleView(row)}>
+                      <Button
+                        type="default"
+                        onClick={() => handleView(row._id)}
+                      >
                         View
                       </Button>
                       <Dropdown
@@ -340,31 +391,63 @@ const ParticipantList = () => {
       >
         <Form>
           <Form.Item label="Event">
-            <Input value={selectedRecord?.name} disabled />
+            <Input
+              value={selectedRecord?.eventName}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="EvID">
-            <Input value={selectedRecord?.key} disabled />
+            <Input value="GR00123" style={{ color: "grey" }} disabled />
           </Form.Item>
           <Form.Item label="First Name">
-            <Input value={selectedRecord?.name.split(" ")[0]} disabled />
+            <Input
+              value={selectedRecord?.firstName}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="Last Name">
-            <Input value={selectedRecord?.name.split(" ")[1]} disabled />
+            <Input
+              value={selectedRecord?.lastName}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="Age">
-            <Input value="N/A" disabled />
+            <Input
+              value={selectedRecord?.age}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="City of Residence">
-            <Input value="N/A" disabled />
+            <Input
+              value={selectedRecord?.address}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="Email">
-            <Input value={selectedRecord?.email} disabled />
+            <Input
+              value={selectedRecord?.email}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="Mobile">
-            <Input value={selectedRecord?.mobile} disabled />
+            <Input
+              value={selectedRecord?.phone}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="How did you hear about this event?">
-            <Input value="N/A" disabled />
+            <Input
+              value={selectedRecord?.aboutEvent}
+              style={{ color: "grey" }}
+              disabled
+            />
           </Form.Item>
           <Form.Item>
             <Checkbox>Confirm Email</Checkbox>
