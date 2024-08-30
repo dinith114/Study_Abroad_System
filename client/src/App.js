@@ -26,7 +26,8 @@ import StudentProfile from "./StudentApplication/StudentProfile";
 import StudentList from "./StudentApplication/StudentList";
 import EventMainStudent from "./Marketing/EventMainStudent";
 import EventRegister from "./Marketing/EventRegister";
-import RegisteredStudentList from "./StudentApplication/RegisteredStudentsList";
+import RegisteredStudentList from "./StudentApplication/RegisteredStudentList";
+import SideMenuBar from "./Components/SideMenuBar";
 import PartnershipForm from "./Partnership/PartnershipForm";
 import Course from "./Partnership/Course";
 import CourseTable from "./Partnership/CourseTable";
@@ -60,12 +61,6 @@ const App = () => {
           <Route path="/studentProfile" element={<StudentProfile />} />
           <Route path="/studentList" element={<StudentList />} />
           <Route path="/registeredStudentList" element={<RegisteredStudentList />} />
-          <Route path="/loan-app-view" element={<LoanDetailsPage />} />
-          <Route path="/loan-app-edit" element={<EditLoanApplication />} />
-          <Route path="/partnership-form" element={<PartnershipForm />} />
-          <Route path="/course" element={<Course />} />
-          <Route path="/course-table" element={<CourseTable />} />
-          <Route path="/partnership-table" element={<PartnershipTable />} />
         </Routes>
       </Router>
       <Footer />

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Input, Dropdown, Menu } from 'antd';
-import { SearchOutlined, EditOutlined, DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined, DeleteOutlined, DownOutlined, EllipsisOutlined, InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 function getStatusColor(status) {
   switch (status) {
@@ -19,7 +22,7 @@ function getStatusColor(status) {
   }
 }
 
-function getColumns(handleStatusChange) {
+function getColumns(handleStatusChange, handleMenuClick, handleEdit) {
   return [
     {
       title: 'Registration No.',
@@ -30,12 +33,12 @@ function getColumns(handleStatusChange) {
     },
     {
       title: 'Name',
-      dataIndex: 'name',
+      dataIndex: 'studentFullName',
       key: 'name',
     },
     {
       title: 'Mobile',
-      dataIndex: 'mobile',
+      dataIndex: 'phoneNumber',
       key: 'mobile',
     },
     {
@@ -49,7 +52,7 @@ function getColumns(handleStatusChange) {
       key: 'status',
       render: (status, record) => (
         <Dropdown
-          overlay={getMenu(handleStatusChange, record.key)}
+          overlay={getStatusMenu(handleStatusChange, record._id)}
           trigger={['click']}
         >
           <Button
@@ -71,16 +74,23 @@ function getColumns(handleStatusChange) {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        <>
-          <Button icon={<EditOutlined />} style={{ marginRight: '8px' }}>Update</Button>
-          <Button icon={<DeleteOutlined />} type="danger" />
-        </>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Button icon={<EditOutlined />} style={{ marginRight: '8px' }} onClick={() => handleEdit(record._id)}>Update</Button>
+          <Button icon={<DeleteOutlined />} type="danger" style={{ marginRight: '8px' }}  />
+          <Dropdown
+            overlay={getActionMenu(handleMenuClick)}
+            trigger={['click']}
+            placement="bottomRight"
+          >
+            <Button icon={<EllipsisOutlined />} />
+          </Dropdown>
+        </div>
       ),
     },
   ];
 }
 
-function getMenu(handleStatusChange, key) {
+function getStatusMenu(handleStatusChange, key) {
   return (
     <Menu
       onClick={(e) => handleStatusChange(e, key)}
@@ -95,47 +105,73 @@ function getMenu(handleStatusChange, key) {
   );
 }
 
-function getData() {
-  return [
-    {
-      key: '1',
-      registrationNo: '001',
-      name: 'Jayangi Pamodya Rathnamalala',
-      mobile: '0778465000',
-      email: 'jayangi123@gmail.com',
-      status: 'Under Review',
-    },
-    {
-      key: '2',
-      registrationNo: '002',
-      name: 'Jayangi Pamodya Rathnamalala',
-      mobile: '0778465000',
-      email: 'jayangi123@gmail.com',
-      status: 'Under Review',
-    },
-    // Add more student data here...
-  ];
+function getActionMenu(handleMenuClick) {
+  return (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="view" icon={<InfoCircleOutlined />} style={{ color: 'blue' }} >
+        View
+      </Menu.Item>
+      <Menu.Item key="update" icon={<EditOutlined />} style={{ color: 'blue' }} >
+        Update
+      </Menu.Item>
+      <Menu.Item key="sendEmail" icon={<MailOutlined />} style={{ color: 'blue' }}>
+        Send Email
+      </Menu.Item>
+      <Menu.Item key="delete" icon={<DeleteOutlined />} style={{ color: 'red' }}>
+        Delete
+      </Menu.Item>
+    </Menu>
+  );
 }
 
 function StudentList() {
-  const [data, setData] = useState(getData());
+  const navigate = useNavigate();
+  const [studentList, setStudentList] = useState([]);
+
+  useEffect(() => {
+    viewStudentApplication();
+  }, []);
+
+  const viewStudentApplication = async () => {
+    let response = await axios.get(
+      `http://localhost:5000/studentapp/viewStudentApplication`
+    );
+    console.log("response", response.data);
+    setStudentList(response.data);
+  };
 
   const handleStatusChange = (e, key) => {
-    const newData = data.map((item) => {
-      if (item.key === key) {
+    const newData = studentList.map((item) => {
+      if (item._id === key) {
         return { ...item, status: e.key };
       }
       return item;
     });
-    setData(newData);
+    setStudentList(newData);
   };
 
-  const columns = getColumns(handleStatusChange);
+  const handleMenuClick = (id) => {
+    if (id.key === 'view') {
+      navigate(`/studentProfile?id=${id}`);
+    }
+    // Add more actions based on e.key if needed
+    console.log(id.key);
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/editStudent?id=${id}`);
+  };
+
+ /*  const handleDelete = (id) => {
+    navigate(`/editStudent?id=${id}`);
+  }; */
+
+  const columns = getColumns(handleStatusChange, handleMenuClick, handleEdit);
 
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <Button type="primary">New Registration</Button>
+        <Button type="primary" onClick={() => navigate("/addStudent")}>New Registration</Button>
         <Input
           placeholder="Enter Student ID"
           suffix={<SearchOutlined />}
@@ -144,7 +180,7 @@ function StudentList() {
       </div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={studentList}
         pagination={false}
         bordered
         style={{ borderRadius: '8px', overflow: 'hidden' }}
