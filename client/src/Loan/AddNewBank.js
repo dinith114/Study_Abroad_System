@@ -1,41 +1,55 @@
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Button, Upload, Select, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const AddNewBank = () => {
+function AddNewBank() {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState([]);
+  const [image, setImage] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileChange = ({ fileList }) => {
-    setFileList(fileList); // This will manage the file state correctly
+    setImage(fileList[0]?.originFileObj || null);
   };
 
   const onFinish = async (values) => {
     const formData = new FormData();
-    Object.keys(values).forEach((key) => {
-      if (key === 'bankIcon') {
-        formData.append(key, values[key]?.file?.originFileObj); // Correctly append file to FormData
-      } else {
-        formData.append(key, values[key]);
-      }
-    });
+    
+    // Append all fields from the form to FormData
+    formData.append('bankName', values.bankName);
+    formData.append('interestRate', values.interestRate);
+    formData.append('rank', values.rank);
+    formData.append('maxLoan', values.maxLoan);
+    formData.append('repaymentPeriod', values.repaymentPeriod);
+    formData.append('purpose', values.purpose);
+    formData.append('documentsRequired', values.documentsRequired.join(','));
+    formData.append('eligiblePersons', values.eligiblePersons.join(','));
+    formData.append('benefits', values.benefits.join(','));
+
+    // Append image if available
+    if (image) {
+      formData.append('image', image);
+    } else {
+      message.error('Please upload a bank icon.');
+      return; // Stop the form submission if no image is provided
+    }
 
     try {
-      const response = await axios.post('http://localhost:5000/banks/add', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await axios.post('http://localhost:5000/banks/add', formData); // No Content-Type header needed
       message.success('Bank added successfully!');
       form.resetFields();
-      setFileList([]);
+      setImage(null);
     } catch (error) {
       message.error('Failed to add bank. Please try again.');
     }
+  };
+
+  const handleViewBanks = () => {
+    navigate('/bank-list');
   };
 
   return (
@@ -146,7 +160,6 @@ const AddNewBank = () => {
             listType="picture"
             beforeUpload={() => false} // Prevent automatic upload
             onChange={handleFileChange}
-            fileList={fileList}
           >
             <Button icon={<UploadOutlined />}>Upload Bank Icon</Button>
           </Upload>
@@ -157,9 +170,12 @@ const AddNewBank = () => {
             Add Bank
           </Button>
         </Form.Item>
+        <Button type="default" onClick={handleViewBanks} className="w-full">
+          View Banks
+        </Button>
       </Form>
     </div>
   );
-};
+}
 
 export default AddNewBank;

@@ -1,22 +1,20 @@
-// BankDetailsModal.jsx
 import React from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 
 function BankDetailsModal({ bank, onClose }) {
   if (!bank) return null;
 
-  // Ensure each property has a default value if undefined
+  // Destructure bank details, setting defaults where necessary
   const {
-    name = 'Unknown Bank',
-    logo,
+    bankName = 'Unknown Bank',
+    bankIcon,
     rank = 'N/A',
     interestRate = 'N/A',
     maxLoan = 0,
     repaymentPeriod = 'N/A',
-    eligibility = 'N/A',
+    eligibilityCriteria = 'N/A',
     purpose = 'N/A',
   } = bank;
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -31,7 +29,7 @@ function BankDetailsModal({ bank, onClose }) {
         </button>
 
         {/* Bank name */}
-        <h2 className="text-2xl font-bold mb-4">{name}</h2>
+        <h2 className="text-2xl font-bold mb-4">{bankName}</h2>
 
         {/* Bank details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -45,7 +43,7 @@ function BankDetailsModal({ bank, onClose }) {
           </div>
           <div>
             <p className="font-semibold">Maximum Loan:</p>
-            {/* Use toLocaleString safely by ensuring maxLoan is a number and change $ to Rs. */}
+            {/* Use toLocaleString to format maxLoan and change $ to Rs. */}
             <p>Rs. {typeof maxLoan === 'number' ? maxLoan.toLocaleString() : maxLoan}</p>
           </div>
           <div>
@@ -53,8 +51,8 @@ function BankDetailsModal({ bank, onClose }) {
             <p>{repaymentPeriod} months</p>
           </div>
           <div className="col-span-2">
-            <p className="font-semibold">Eligibility:</p>
-            <p>{eligibility}</p>
+            <p className="font-semibold">Eligibility Criteria:</p>
+            <p>{eligibilityCriteria}</p>
           </div>
           <div className="col-span-2">
             <p className="font-semibold">Purpose:</p>
@@ -62,13 +60,13 @@ function BankDetailsModal({ bank, onClose }) {
           </div>
         </div>
 
-        {/* Logo at the bottom with increased size */}
-        {logo && (
+        {/* bankIcon at the bottom with increased size */}
+        {bankIcon && (
           <div className="flex justify-center mt-6">
             <img
-              src={logo}
-              alt={`Logo of ${name}`}
-              className="h-16 mx-auto mb-4" // Increased size
+              src={bankIcon}
+              alt={`bankIcon of ${bankName}`}
+              className="h-16 mx-auto mb-4" 
             />
           </div>
         )}
