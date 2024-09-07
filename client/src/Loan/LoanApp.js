@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Select, Button, Typography } from 'antd';
 import { motion } from 'framer-motion';
@@ -7,14 +7,6 @@ import BankCard from './BankCard';
 import BankDetailsModal from './BankDetailsModal';
 import ComparePopup from './ComparePopup';
 import PageTitle from '../Components/PageTitle';
-import BOC from '../Images/boc.png';
-import HNB from "../Images/hnb.png";
-import dfcc from "../Images/dfcc.jpg";
-import peoples from "../Images/peoples.png";
-import seylan from "../Images/seylan.jpg";
-import nsb from "../Images/nsb.png";
-import panasia from "../Images/panasia.jpg";
-import sampath from "../Images/sampath.jpg";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -38,17 +30,23 @@ function ApplyLoan() {
   const [programs, setPrograms] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [form] = Form.useForm();
+  
+  // State to store bank data fetched from the backend
+  const [banks, setBanks] = useState([]);
 
-  const banks = [
-    { id: 1, name: 'Bank of Ceylon', rank: 1, logo: BOC },
-    { id: 2, name: 'Hatton National Bank', rank: 2, logo: HNB },
-    { id: 3, name: 'DFCC Bank', rank: 3, logo: dfcc },
-    { id: 4, name: 'People’s Bank', rank: 4, logo: peoples },
-    { id: 5, name: 'Seylan Bank', rank: 5, logo: seylan },
-    { id: 6, name: 'NSB', rank: 6, logo: nsb },
-    { id: 7, name: 'Pan Asia Bank', rank: 7, logo: panasia },
-    { id: 8, name: 'Sampath Bank', rank: 8, logo: sampath },
-  ];
+  // Fetch banks data from backend when component mounts
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/banks/list');
+        setBanks(response.data);
+      } catch (error) {
+        console.error('Error fetching bank data:', error);
+      }
+    };
+
+    fetchBanks();
+  }, []);
 
   const handleUniversityChange = (universityId) => {
     const university = universities.find((uni) => uni.id === universityId);
@@ -124,11 +122,6 @@ function ApplyLoan() {
       alert('An error occurred. Please try again.');
     }
   };
-  
-  
-  
-  
-  
 
   const handleUploadDocument = () => {
     navigate('/upload-do');
@@ -154,28 +147,116 @@ function ApplyLoan() {
                 Student Information
               </Title>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Form.Item name="studentId" label="Student ID" rules={[{ required: true }]}>
+                <Form.Item
+                  name="studentId"
+                  label="Student ID"
+                  rules={[{ required: true, message: 'Please enter Student ID' }]}
+                >
                   <Input placeholder="Student ID" />
                 </Form.Item>
-                <Form.Item name="firstName" label="First Name" rules={[{ required: true }]}>
+
+                <Form.Item
+                  name="firstName"
+                  label="First Name"
+                  rules={[
+                    { required: true, message: 'Please enter First Name' },
+                    { 
+                      pattern: /^[A-Z][a-z]*$/, 
+                      message: 'Start with a capital letter' 
+                    }
+                  ]}
+                >
                   <Input placeholder="First Name" />
                 </Form.Item>
-                <Form.Item name="lastName" label="Last Name" rules={[{ required: true }]}>
+
+                <Form.Item
+                  name="lastName"
+                  label="Last Name"
+                  rules={[
+                    { required: true, message: 'Please enter Last Name' },
+                    { 
+                      pattern: /^[A-Z][a-z]*$/, 
+                      message: 'Start with a capital letter' 
+                    }
+                  ]}
+                >
                   <Input placeholder="Last Name" />
                 </Form.Item>
-                <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+
+                <Form.Item
+                  name="address"
+                  label="Address"
+                  rules={[{ required: true, message: 'Please enter Address' }]}
+                >
                   <Input placeholder="Address" />
                 </Form.Item>
-                <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
+
+                <Form.Item
+                  name="email"
+                  label="Email"
+                  rules={[
+                    { required: true, message: 'Please enter Email' },
+                    { type: 'email', message: 'Please enter a valid Email' }
+                  ]}
+                >
                   <Input placeholder="Email" />
                 </Form.Item>
-                <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true }]}>
+
+                <Form.Item
+                  name="phoneNumber"
+                  label="Phone Number"
+                  rules={[
+                    { required: true, message: 'Please enter Phone Number' },
+                    { 
+                      pattern: /^07\d{8}$/, 
+                      message: 'Phone Number must start with 07 and be 10 digits long' 
+                    }
+                  ]}
+                >
                   <Input placeholder="Phone Number" />
                 </Form.Item>
-                <Form.Item name="birthDate" label="Birth Date" rules={[{ required: true }]}>
+
+                <Form.Item
+                  name="birthDate"
+                  label="Birth Date"
+                  rules={[
+                    { required: true, message: 'Please enter Birth Date' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value) {
+                          return Promise.reject('Please enter Birth Date');
+                        }
+                        const birthDate = new Date(value);
+                        const today = new Date();
+                        const age = today.getFullYear() - birthDate.getFullYear();
+                        const monthDiff = today.getMonth() - birthDate.getMonth();
+                        const dayDiff = today.getDate() - birthDate.getDate();
+
+                        if (
+                          age > 16 || 
+                          (age === 16 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)))
+                        ) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject('You must be at least 16 years old');
+                      }
+                    })
+                  ]}
+                >
                   <Input placeholder="Birth Date" type="date" />
                 </Form.Item>
-                <Form.Item name="nicNumber" label="NIC Number" rules={[{ required: true }]}>
+
+                <Form.Item
+                  name="nicNumber"
+                  label="NIC Number"
+                  rules={[
+                    { required: true, message: 'Please enter NIC Number' },
+                    { 
+                      pattern: /^(\d{9}[vV]|\d{12})$/, 
+                      message: 'Enter valid NIC number' 
+                    }
+                  ]}
+                >
                   <Input placeholder="NIC Number" />
                 </Form.Item>
               </div>
@@ -214,87 +295,70 @@ function ApplyLoan() {
               </div>
 
               <Form.Item
-  name="selectedBank"
-  label="Select Bank"
-  rules={[{ required: true, message: 'Please select a bank' }]}
->
-  <Select
-    placeholder="Select a Bank"
-    onChange={(value) => setSelectedBank(value)} // Set selectedBank directly
-  >
-    {banks.map((bank) => (
-      <Option key={bank.id} value={bank.name}>
-        {bank.name}
-      </Option>
-    ))}
-  </Select>
-</Form.Item>
+                name="selectedBank"
+                label="Select Bank"
+                rules={[{ required: true, message: 'Please select a bank' }]}
+              >
+                <Select placeholder="Select Bank">
+                  {banks.map((bank) => (
+                    <Option key={bank._id} value={bank.bankName}>
+                      {bank.bankName}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
-              <div className="flex justify-between mt-6">
-                <motion.button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-red-500 text-white py-2 px-16 rounded-full text-lg font-semibold shadow-lg"
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.1 }}
-                  className="bg-grNavTextHov hover:bg-grNavText text-white py-2 px-8 rounded-full text-lg font-semibold shadow-lg"
-                >
-                  Apply for Loan
-                </motion.button>
+              <div className="flex flex-wrap justify-between mt-10">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button type="primary" htmlType="submit" className="w-full md:w-auto">
+                    Submit Application
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button onClick={handleCancel} className="w-full md:w-auto">
+                    Cancel
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button onClick={handleOpenCompare} className="w-full md:w-auto">
+                    Compare Banks
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button onClick={handleUploadDocument} className="w-full md:w-auto">
+                    Upload Documents
+                  </Button>
+                </motion.div>
               </div>
             </Form>
           </div>
-
-          <div className="w-full md:w-1/2 p-4 flex flex-col space-y-6">
-            <div className="flex justify-center space-x-4">
-              <motion.button
-                type="button"
+          <div className="w-full md:w-1/2 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {banks.map((bank) => (
+              <motion.div
+                key={bank._id}
                 whileHover={{ scale: 1.05 }}
-                onClick={handleOpenCompare}
-                className="bg-grNavTextHov text-white py-3 px-4 rounded-full text-lg font-semibold shadow-lg w-2/5"
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleViewClick(bank)}  // Pass the bank data here
               >
-                Compare Banks
-              </motion.button>
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.05 }}
-                onClick={handleUploadDocument}
-                className="bg-grNavTextHov text-white py-3 px-4 rounded-full text-lg font-semibold shadow-lg w-2/5"
-              >
-                Upload Document
-              </motion.button>
-            </div>
+                <BankCard
+                  bankName={bank.bankName}
+                  rank={bank.rank}
+                  logo={bank.logo}
+                  onViewClick={() => handleViewClick(bank)}  // Passing the function to open the modal
+                />
+              </motion.div>
+            ))}
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mt-4">
-              {banks.map((bank) => (
-                <motion.div 
-                  key={bank.id} 
-                  className="relative" 
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <BankCard
-                    bankName={bank.name}
-                    rank={bank.rank}
-                    logo={bank.logo}
-                    isSelected={selectedBank?.id === bank.id}
-                    onClick={() => handleViewClick(bank)}
-                    onViewClick={() => handleViewClick(bank)}
-                  />
-                </motion.div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
+      {/* Modals */}
+      {isModalOpen && selectedBank && (
         <BankDetailsModal bank={selectedBank} onClose={handleCloseModal} />
       )}
-
       {isCompareOpen && (
         <ComparePopup onClose={handleCloseCompare} />
       )}

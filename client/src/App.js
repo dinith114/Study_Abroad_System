@@ -33,6 +33,7 @@ import CourseTable from "./Partnership/CourseTable";
 import PartnershipTable from "./Partnership/PartnershipTable";
 
 import LoanAppView from "./Loan/LoanAppView";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
@@ -40,7 +41,7 @@ const App = () => {
       <Router>
         <NavBar />
         <Routes>
-          {/* <Route path="/" element={<Home />} /> */}
+          <Route path="/" element={<Home />} />
           <Route path="/creatEvent" element={<EventForm />} />
           <Route path="/EventForm-edit" element={<EditEventForm />} />
           <Route path="/participantList" element={<ParticipantList />} />
