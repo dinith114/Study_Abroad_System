@@ -83,7 +83,7 @@ function StudentRegistrationForm() {
     try {
       const response = await axios.post("http://localhost:5000/studentapp/createStudentApplication", values);
       console.log('Update response:', response.data);
-      navigate('/ViewStudentApplication'); // Redirect after update
+      navigate('/studentList'); // Redirect after update
     } catch (error) {
       console.error("Error updating data:", error);
     }

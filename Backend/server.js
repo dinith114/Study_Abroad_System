@@ -9,6 +9,9 @@ const path = require('path'); // Import the path module
 const bodyParser = require("body-parser");
 // const fileuplaod = require("express-fileupload");
 // const upload = require('./middlewares/upload');
+const bodyParser = require("body-parser");
+const fileuplaod = require("express-fileupload");
+const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
@@ -28,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload()); // Add express-fileupload middleware
 // // Create a new bank with file upload
 // router.post('/add', upload.single('bankIcon'), bankController.createBank);
+app.use(express.static(__dirname + "/attachFile"));
 
 // connect to mongoDB
 //mongoose.connect("mongodb://localhost/mern-stack-db");
@@ -53,7 +57,15 @@ app.listen(PORT, () => {
 
 console.log("hi");
 console.log("hi");
+const loanApplicationsRouter = require("./routes/loanApplications");
+// const EventRouter = require("../Backend/routes/EventRoute");
+const StudentApplicationRouter = require("../Backend/routes/StudentApplicationRoute");
 
+app.use("/loan-applications", loanApplicationsRouter);
+// app.use("/event", EventRouter);
+app.use("/studentapp", StudentApplicationRouter);
+
+<<<<<<< Updated upstream
 app.use('/loan-applications', loanApplicationsRouter);
 const EventRouter = require("../Backend/routes/EventRoute");
 const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
@@ -64,3 +76,5 @@ app.use("/eventRegister", EventRegisterRouter);
 app.use('/loan-applications', loanApplicationsRouter);
 
 app.use('/banks', bankRoutes);
+=======
+>>>>>>> Stashed changes

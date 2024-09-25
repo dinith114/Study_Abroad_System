@@ -3,8 +3,13 @@ const mongoose = require('mongoose');
 
 // Define the schema for a loan application
 const studentApplicationSchema = new mongoose.Schema({
+  // studentID: {
+  //   type: String,  // The generated student ID
+  //   unique: true,
+  //   required: true,
+  // },
   studentFullName: {
-    type: String,
+    type: String, 
     required: true,
   },
   studentFirstName: {
@@ -34,6 +39,11 @@ const studentApplicationSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+  },
+  status: {
+    type: String,
+    enum: ['Registered', 'Under Review', 'Accepted', 'Finalized', 'Rejected'],
+    default: 'Registered',
   },
   phoneNumber: {
     type: String,

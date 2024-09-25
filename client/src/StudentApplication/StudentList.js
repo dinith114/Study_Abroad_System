@@ -24,13 +24,13 @@ function getStatusColor(status) {
 
 function getColumns(handleStatusChange, handleMenuClick, handleEdit) {
   return [
-    {
-      title: 'Registration No.',
-      dataIndex: 'registrationNo',
-      key: 'registrationNo',
-      align: 'center',
-      render: (text) => <div style={{ backgroundColor: '#f0f5ff', padding: '5px' }}>{text}</div>,
-    },
+    // {
+    //   title: 'Registration No.',
+    //   dataIndex: 'registrationNo',
+    //   key: 'registrationNo',
+    //   align: 'center',
+    //   render: (text) => <div style={{ backgroundColor: '#f0f5ff', padding: '5px' }}>{text}</div>,
+    // },
     {
       title: 'Name',
       dataIndex: 'studentFullName',
@@ -150,6 +150,33 @@ function StudentList() {
     setStudentList(newData);
   };
 
+  // const handleStatusChange = async (e, key) => {
+  //   try {
+  //     console.log(`Updating status for ID: ${key} to ${e.key}`);
+  
+  //     const response = await axios.put(
+  //       `http://localhost:5000/studentapp/updateStatus/${key}`,
+  //       { status: e.key }
+  //     );
+  
+  //     if (response.status === 200) {
+  //       const newData = studentList.map((item) => {
+  //         if (item._id === key) {
+  //           return { ...item, status: e.key };
+  //         }
+  //         return item;
+  //       });
+  //       setStudentList(newData);
+  //       console.log('Status updated successfully');
+  //     } else {
+  //       console.error('Failed to update status');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating status:', error.response ? error.response.data : error.message);
+  //   }
+ // };
+  
+
   const handleMenuClick = (id) => {
     if (id.key === 'view') {
       navigate(`/studentProfile?id=${id}`);
@@ -162,9 +189,11 @@ function StudentList() {
     navigate(`/editStudent?id=${id}`);
   };
 
- /*  const handleDelete = (id) => {
-    navigate(`/editStudent?id=${id}`);
-  }; */
+  
+
+//  /*  const handleDelete = (id) => {
+//     navigate(`/editStudent?id=${id}`);
+//   }; */
 
   const columns = getColumns(handleStatusChange, handleMenuClick, handleEdit);
 

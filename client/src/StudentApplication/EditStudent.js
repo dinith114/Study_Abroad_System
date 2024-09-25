@@ -60,20 +60,21 @@ function EditStudent() {
   };
 
   const handleUpdate = async (values) => {
+    console.log("values",values)
     try {
-        // Separate the file upload from the rest of the form data
-        let formData = new FormData();
-        if (avatar) {
-            formData.append('profileImage', avatar);
-        }
+        // Separate the file upload from the rest of the form data  
+        // let formData = new FormData();
+        // if (avatar) {
+        //     formData.append('profileImage', avatar);
+        // }
 
         // Append other form values to FormData (convert non-File data to JSON)
-        const otherValues = { ...values };
-        delete otherValues.profileImage; // Remove the profileImage from values as it's handled separately
+        // const otherValues = { ...values };
+        // delete otherValues.profileImage; // Remove the profileImage from values as it's handled separately
 
-        formData.append('data', JSON.stringify(otherValues));
+        // formData.append('data', JSON.stringify(otherValues));
 
-        let res = await axios.put(`http://localhost:5000/studentapp/editStudentApplication/${record}`, formData, {
+        let res = await axios.put(`http://localhost:5000/studentapp/editStudentApplication/${record}`, values, {
             headers: {
                 'Content-Type':[ 'multipart/form-data', 'application/json']
             },

@@ -12,4 +12,7 @@ app.put("/editStudentApplication/:id", StudentApplicationController.editStudentA
 app.delete("/removeStudentApplication/:id", StudentApplicationController.removeStudentApplication);
 
 app.get("/viewOneStudentApplicationEdit/:id", StudentApplicationController.viewOneStudentApplicationEdit);
-module.exports = app;
+
+// Define the PUT route to update the student's status
+// app.put("/updateStudentStatus/:id", studentController.updateStudentStatus);
+module.exports = app;   

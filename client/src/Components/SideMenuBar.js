@@ -31,7 +31,7 @@ function SideMenuBar() {
           <b> Student Registration</b>
         </Menu.Item>
         <Menu.Item key="2" icon={<UserOutlined />}>
-          <b> Student Registration</b>
+          <b> Student List</b>
         </Menu.Item>
         <Menu.Item key="3" icon={<FileTextOutlined />}>
           View Student Application
