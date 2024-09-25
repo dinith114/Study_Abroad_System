@@ -3,17 +3,31 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require('dotenv');
 const loanApplicationsRouter = require('./routes/loanApplications');
+const fileUpload = require('express-fileupload');
+const bankRoutes = require('./routes/bankRoutes');
+const path = require('path'); // Import the path module
+const bodyParser = require("body-parser");
+// const fileuplaod = require("express-fileupload");
+// const upload = require('./middlewares/upload');
 dotenv.config();
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-app.use(fileuplaod({ createParentPath: true }));
+// app.use(fileuplaod({ createParentPath: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(__dirname + "/attachFile"));
+
+
+//Pasan image upload
+app.use(fileUpload()); // Add express-fileupload middleware
+// // Create a new bank with file upload
+// router.post('/add', upload.single('bankIcon'), bankController.createBank);
 
 // connect to mongoDB
 //mongoose.connect("mongodb://localhost/mern-stack-db");
@@ -41,3 +55,12 @@ console.log("hi");
 console.log("hi");
 
 app.use('/loan-applications', loanApplicationsRouter);
+const EventRouter = require("../Backend/routes/EventRoute");
+const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
+
+app.use("/event", EventRouter);
+app.use("/eventRegister", EventRegisterRouter);
+
+app.use('/loan-applications', loanApplicationsRouter);
+
+app.use('/banks', bankRoutes);
