@@ -90,9 +90,11 @@ function NavBar() {
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Events
             </li>
+            <Link to = "/ViewTransactions">
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Finance
             </li>
+            </Link>
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Feedbacks
             </li>

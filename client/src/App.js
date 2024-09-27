@@ -31,6 +31,10 @@ import PartnershipForm from "./Partnership/PartnershipForm";
 import Course from "./Partnership/Course";
 import CourseTable from "./Partnership/CourseTable";
 import PartnershipTable from "./Partnership/PartnershipTable";
+import ViewTransactions from "./Financial/ViewTransactions";
+import EditTransaction from "./Financial/EditTranscation";
+import NewTransaction from "./Financial/NewTransaction";
+import Dashboard from "./Financial/Dashboard";
 
 import LoanAppView from "./Loan/LoanAppView";
 import Home from "./pages/Home";
@@ -67,6 +71,12 @@ const App = () => {
           <Route path="/course" element={<Course />} />
           <Route path="/course-table" element={<CourseTable />} />
           <Route path="/partnership-table" element={<PartnershipTable />} />
+
+
+          <Route path="/ViewTransactions" element={<ViewTransactions />} /> 
+          <Route path="/NewTransaction" element={<NewTransaction />} /> 
+          <Route path="/Dashboard" element={<Dashboard />} /> ?
+          <Route path="/EditTransaction" element={<EditTransaction />} /> 
         </Routes>
       </Router>
       <Footer />
