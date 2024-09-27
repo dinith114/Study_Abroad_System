@@ -10,6 +10,8 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.20.2",
     "axios": "^1.7.2",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.3",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -18,6 +20,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
     "react-world-flags": "^1.6.0",
+    "recharts": "^2.12.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

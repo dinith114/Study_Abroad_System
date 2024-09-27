@@ -7,8 +7,13 @@ const fileUpload = require('express-fileupload');
 const bankRoutes = require('./routes/bankRoutes');
 const path = require('path'); // Import the path module
 const bodyParser = require("body-parser");
+
+
 // const fileuplaod = require("express-fileupload");
 // const upload = require('./middlewares/upload');
+const financialRouter = require('../Backend/routes/FinancialRoute');
+
+
 dotenv.config();
 
 const app = express();
@@ -60,5 +65,6 @@ app.use("/event", EventRouter);
 app.use("/eventRegister", EventRegisterRouter);
 
 app.use('/loan-applications', loanApplicationsRouter);
+app.use('/financial',financialRouter);
 
 app.use('/banks', bankRoutes);
