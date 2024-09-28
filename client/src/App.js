@@ -35,6 +35,9 @@ import ViewTransactions from "./Financial/ViewTransactions";
 import EditTransaction from "./Financial/EditTranscation";
 import NewTransaction from "./Financial/NewTransaction";
 import Dashboard from "./Financial/Dashboard";
+import DocumentTable from "./Document_Management/DocumentTable";
+import EditDocumentHeader from "./Components/EditDocumentHeader";
+
 
 import LoanAppView from "./Loan/LoanAppView";
 import Home from "./pages/Home";
@@ -77,6 +80,10 @@ const App = () => {
           <Route path="/NewTransaction" element={<NewTransaction />} /> 
           <Route path="/Dashboard" element={<Dashboard />} /> ?
           <Route path="/EditTransaction" element={<EditTransaction />} /> 
+          <Route path="/DocumentTable" element={<DocumentTable />} /> 
+          <Route path="/EditDocumentHeader" element={<EditDocumentHeader />} />
+
+
         </Routes>
       </Router>
       <Footer />
