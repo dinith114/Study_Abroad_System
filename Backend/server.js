@@ -13,6 +13,7 @@ const bodyParser = require("body-parser");
 // const upload = require('./middlewares/upload');
 const financialRouter = require('../Backend/routes/FinancialRoute');
 
+const documentRoute = require('../Backend/routes/DocumentRoute')
 
 dotenv.config();
 
@@ -63,6 +64,7 @@ const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
 
 app.use("/event", EventRouter);
 app.use("/eventRegister", EventRegisterRouter);
+app.use('/document',documentRoute)
 
 app.use('/loan-applications', loanApplicationsRouter);
 app.use('/financial',financialRouter);
