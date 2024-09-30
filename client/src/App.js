@@ -53,6 +53,7 @@ import RequestsTable from "./LanguageTest/ViewLanPrepRequest";
 import PackageList from "./LanguageTest/PackageList";
 import EducationLoan from "./Loan/EducationLoan";
 import ViewStudent from "./StudentApplication/ViewStudent";
+import Home2 from "./pages/Home2";
 
 const App = () => {
   return (
@@ -60,7 +61,8 @@ const App = () => {
       <Router>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Home />} /> */}
+          <Route path="/" element={<Home2 />} />
           <Route path="/creatEvent" element={<EventForm />} />
           <Route path="/EventForm-edit" element={<EditEventForm />} />
           <Route path="/participantList" element={<ParticipantList />} />
