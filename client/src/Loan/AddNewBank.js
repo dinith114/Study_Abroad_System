@@ -9,11 +9,14 @@ const { Option } = Select;
 
 function AddNewBank() {
   const [form] = Form.useForm();
-  const [image, setImage] = useState(null);
+  const [fileList, setFileList] = useState([]);
   const navigate = useNavigate();
 
-  const handleFileChange = ({ fileList }) => {
-    setImage(fileList[0]?.originFileObj || null);
+  const handleFileChange = (info) => {
+    let files = [...info.fileList];
+    // Restrict to a single file by truncating the fileList array to the first element
+    files = files.slice(-1);
+    setFileList(files);
   };
 
   const onFinish = async (values) => {
@@ -26,13 +29,13 @@ function AddNewBank() {
     formData.append('maxLoan', values.maxLoan);
     formData.append('repaymentPeriod', values.repaymentPeriod);
     formData.append('purpose', values.purpose);
-    formData.append('documentsRequired', values.documentsRequired.join(','));
-    formData.append('eligiblePersons', values.eligiblePersons.join(','));
-    formData.append('benefits', values.benefits.join(','));
+    formData.append('documentsRequired', JSON.stringify(values.documentsRequired));
+    formData.append('eligiblePersons', JSON.stringify(values.eligiblePersons));
+    formData.append('benefits', JSON.stringify(values.benefits));
 
-    // Append image if available
-    if (image) {
-      formData.append('image', image);
+    // Check if the file list contains an uploaded file
+    if (fileList.length > 0) {
+      formData.append('bankIcon', fileList[0].originFileObj);
     } else {
       message.error('Please upload a bank icon.');
       return; // Stop the form submission if no image is provided
@@ -42,9 +45,11 @@ function AddNewBank() {
       await axios.post('http://localhost:5000/banks/add', formData); // No Content-Type header needed
       message.success('Bank added successfully!');
       form.resetFields();
-      setImage(null);
+      setFileList([]);
+      navigate('/bank-list');
     } catch (error) {
       message.error('Failed to add bank. Please try again.');
+      console.error('Error adding bank:', error.response?.data || error);
     }
   };
 
@@ -158,6 +163,7 @@ function AddNewBank() {
           <Upload
             name="bankIcon"
             listType="picture"
+            fileList={fileList} // Set fileList state to be displayed
             beforeUpload={() => false} // Prevent automatic upload
             onChange={handleFileChange}
           >

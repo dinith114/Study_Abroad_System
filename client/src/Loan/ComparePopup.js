@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import { FaPercentage, FaMoneyBillWave, FaCalendarAlt, FaShieldAlt, FaCalculator } from 'react-icons/fa';
 import axios from 'axios';
 
 function ComparePopup({ onClose }) {
-  const [banks, setBanks] = useState([]); // State to store fetched banks
+  const [banks, setBanks] = useState([]);
   const [selectedBank1, setSelectedBank1] = useState(null);
   const [selectedBank2, setSelectedBank2] = useState(null);
 
-  // Fetch bank data from the backend when the component mounts
   useEffect(() => {
     const fetchBanks = async () => {
       try {
         const response = await axios.get('http://localhost:5000/banks/list');
-        setBanks(response.data); // Assuming response.data contains the list of banks
+        setBanks(response.data);
       } catch (error) {
         console.error('Error fetching banks:', error);
       }
@@ -32,6 +32,38 @@ function ComparePopup({ onClose }) {
     }
   };
 
+  const calculateEMI = (principal, interestRate, tenureMonths) => {
+    if (!principal || !interestRate || !tenureMonths) return '-';
+    
+    const monthlyInterestRate = interestRate / (12 * 100); // Annual rate to monthly and percentage to decimal
+    const numerator = principal * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, tenureMonths);
+    const denominator = Math.pow(1 + monthlyInterestRate, tenureMonths) - 1;
+    
+    return (numerator / denominator).toFixed(2); // EMI rounded to 2 decimal places
+  };
+
+  const renderComparisonRow = (label, icon, bank1Value, bank2Value) => {
+    const isDifferent = bank1Value !== bank2Value;
+    return (
+      <div className="grid grid-cols-3 gap-4 items-center">
+        <div className="font-semibold flex items-center">
+          {icon && <span className="mr-2">{icon}</span>}
+          {label}
+        </div>
+        <div className={`border p-2 ${isDifferent && 'bg-yellow-100'}`}>{bank1Value || '-'}</div>
+        <div className={`border p-2 ${isDifferent && 'bg-yellow-100'}`}>{bank2Value || '-'}</div>
+      </div>
+    );
+  };
+
+  // Calculate EMIs for both banks
+  const emiBank1 = selectedBank1
+    ? calculateEMI(selectedBank1.maxLoan, selectedBank1.interestRate, selectedBank1.repaymentPeriod)
+    : '-';
+  const emiBank2 = selectedBank2
+    ? calculateEMI(selectedBank2.maxLoan, selectedBank2.interestRate, selectedBank2.repaymentPeriod)
+    : '-';
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-3xl p-6 relative">
@@ -44,7 +76,6 @@ function ComparePopup({ onClose }) {
         <h2 className="text-xl font-semibold text-center mb-6">Compare Banks</h2>
 
         <div className="grid grid-cols-3 gap-4 text-center text-sm">
-          {/* Column Headers */}
           <div></div>
           <div className="font-semibold">
             <select 
@@ -74,39 +105,22 @@ function ComparePopup({ onClose }) {
               ))}
             </select>
           </div>
+        </div>
 
-          {/* Rows for Comparison */}
-          <div className="font-semibold">Repayment Period</div>
-          <div className="border p-2">{selectedBank1?.repaymentPeriod || '-'}</div>
-          <div className="border p-2">{selectedBank2?.repaymentPeriod || '-'}</div>
+        {/* Comparison rows with icons */}
+        {renderComparisonRow('Repayment Period', <FaCalendarAlt />, selectedBank1?.repaymentPeriod, selectedBank2?.repaymentPeriod)}
+        {renderComparisonRow('Interest Rate', <FaPercentage />, selectedBank1?.interestRate + '%', selectedBank2?.interestRate + '%')}
+        {renderComparisonRow('Maximum Loan', <FaMoneyBillWave />, `Rs. ${selectedBank1?.maxLoan?.toLocaleString()}`, `Rs. ${selectedBank2?.maxLoan?.toLocaleString()}`)}
+        {renderComparisonRow('EMI', <FaCalculator />, `Rs. ${emiBank1}`, `Rs. ${emiBank2}`)}
+        {renderComparisonRow('Securities', <FaShieldAlt />, selectedBank1?.securities, selectedBank2?.securities)}
 
-          <div className="font-semibold">Interest Rate</div>
-          <div className="border p-2">{selectedBank1?.interestRate || '-'}</div>
-          <div className="border p-2">{selectedBank2?.interestRate || '-'}</div>
-
-          <div className="font-semibold">Tenure (Months)</div>
-          <div className="border p-2">{selectedBank1?.repaymentPeriod || '-'}</div>
-          <div className="border p-2">{selectedBank2?.repaymentPeriod || '-'}</div>
-
-          <div className="font-semibold">Max Loan Amount</div>
-          <div className="border p-2">{selectedBank1?.maxLoan || '-'}</div>
-          <div className="border p-2">{selectedBank2?.maxLoan || '-'}</div>
-
-          <div className="font-semibold">Equated Monthly Instalment (EMI)</div>
-          <div className="border p-2">{selectedBank1?.emi || '-'}</div>
-          <div className="border p-2">{selectedBank2?.emi || '-'}</div>
-
-          <div className="font-semibold">Securities</div>
-          <div className="border p-2">{selectedBank1?.securities || '-'}</div>
-          <div className="border p-2">{selectedBank2?.securities || '-'}</div>
-
-          <div className="font-semibold">Grace Period</div>
-          <div className="border p-2">{selectedBank1?.gracePeriod || '-'}</div>
-          <div className="border p-2">{selectedBank2?.gracePeriod || '-'}</div>
-
-          <div className="font-semibold">Maximum Loan</div>
-          <div className="border p-2">{selectedBank1?.maxLoan || '-'}</div>
-          <div className="border p-2">{selectedBank2?.maxLoan || '-'}</div>
+        <div className="mt-6">
+          <button
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            onClick={onClose}
+          >
+            Done
+          </button>
         </div>
       </div>
     </div>
