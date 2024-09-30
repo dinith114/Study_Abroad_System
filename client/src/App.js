@@ -38,6 +38,9 @@ import Dashboard from "./Financial/Dashboard";
 import DocumentTable from "./Document_Management/DocumentTable";
 import EditDocumentHeader from "./Components/EditDocumentHeader";
 
+import UpdatePartnership from "./Partnership/UpdatePartnership";
+import UpdateCourse from "./Partnership/UpdateCourse";
+import ViewPartnerships from "./Partnership/ViewPartnerships";
 
 import LoanAppView from "./Loan/LoanAppView";
 import Home from "./pages/Home";
@@ -103,6 +106,9 @@ const App = () => {
           <Route path="/EditDocumentHeader" element={<EditDocumentHeader />} />
 
 
+          <Route path="/update-partnership" element={<UpdatePartnership />} />
+          <Route path="/update-course" element={<UpdateCourse />} />
+          <Route path="/view-partnerships" element={<ViewPartnerships />} />
         </Routes>
       </Router>
       <Footer />

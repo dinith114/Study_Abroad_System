@@ -16,6 +16,9 @@ const financialRouter = require('../Backend/routes/FinancialRoute');
 
 const documentRoute = require('../Backend/routes/DocumentRoute')
 
+const fileuplaod = require("express-fileupload");
+// const cors = require('cors');
+// const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
@@ -60,6 +63,8 @@ app.listen(PORT, () => {
 //   completed: Boolean,
 // });
 
+// app.use(cors());
+
 console.log("hi");
 console.log("hi");
 const EventRouter = require("../Backend/routes/EventRoute");
@@ -74,3 +79,19 @@ app.use('/financial',financialRouter);
 
 app.use('/languagePrep',languagePrepRequest);
 app.use('/banks', bankRoutes);
+// const loanApplicationsRouter = require("./routes/loanApplications");
+// const EventRouter = require("../Backend/routes/EventRoute");
+// const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
+const PartnershipRoute = require("./routes/PartnershipRouter");
+const CourseRoute = require("./routes/CourseRouter");
+
+
+app.use("/course", CourseRoute);
+app.use("/partnership", PartnershipRoute);
+// app.use("/loan-applications", loanApplicationsRouter);
+// app.use("/event", EventRouter);
+// app.use("/eventRegister", EventRegisterRouter);
+
+// app.use('/loan-applications', loanApplicationsRouter);
+
+// app.use('/banks', bankRoutes);

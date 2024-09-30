@@ -50,4 +50,92 @@
     font-weight: bold;
   }
   
+  .form-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #ddd; /* Lighter border for a softer look */
+    border-radius: 12px; /* Slightly larger rounded corners */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Deeper shadow for more depth */
+    background: linear-gradient(135deg, #f9f9f9, #ffffff); /* Subtle gradient background */
+  }
+  
+  .form-headline {
+    text-align: center;
+    margin-bottom: 30px; /* Increased margin for better spacing */
+    font-size: 2rem; /* Larger font size */
+    color: #333;
+    font-weight: 700; /* Bold font weight */
+    text-transform: uppercase; /* Uppercase text for emphasis */
+  }
+  
+  .form-group {
+    margin-bottom: 25px; /* Increased margin for better spacing */
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 600; /* Slightly heavier font weight */
+    margin-bottom: 8px; /* More space between label and input */
+    color: #555; /* Slightly darker color for better readability */
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px; /* Increased padding for more spacious fields */
+    border: 1px solid #ddd; /* Lighter border color */
+    border-radius: 8px; /* Slightly larger border-radius */
+    font-size: 1rem; /* Consistent font size */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle inset shadow */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #007bff; /* Border color on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Glow effect on focus */
+  }
+  
+  .submit-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px; /* Larger border-radius for buttons */
+    cursor: pointer;
+    font-size: 1rem; /* Consistent font size */
+    font-weight: 600; /* Bold font weight */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+  }
+  
+  .submit-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.02); /* Slight scaling effect on hover */
+  }
+  
+
+  .error-message {
+    color: #d9534f; /* Soft red to make it stand out */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    font-weight: 600; /* Bold text */
+    background-color: #f8d7da; /* Light red background to highlight the message */
+    padding: 0.5rem; /* Add padding for better spacing */
+    border: 1px solid #f5c6cb; /* Subtle border to frame the message */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex;
+    align-items: center; /* Center align any icon and text */
+  }
+  
+  .error-message::before {
+    content: '⚠️'; /* Add an icon before the message */
+    margin-right: 0.5rem; /* Space between icon and message */
+    font-size: 1rem; /* Slightly larger icon size */
+  }
   

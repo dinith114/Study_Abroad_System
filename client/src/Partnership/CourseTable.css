@@ -164,5 +164,78 @@
     text-align: center;
   }
 
+  .search-bar {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
   
+  .search-bar input {
+    padding: 10px 40px 10px 15px;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    transition: box-shadow 0.3s ease;
+  }
   
+  .search-bar input::placeholder {
+    color: #aaa;
+  }
+  
+  .search-bar input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  }
+  
+  .search-bar .search-icon {
+    position: absolute;
+    right: 15px;
+    font-size: 20px;
+    color: #007bff;
+    pointer-events: none;
+  }
+  
+  /* Container for the report buttons */
+.report-buttons {
+  display: flex;
+  justify-content: center; /* Centers the buttons */
+  gap: 10px; /* Adds space between the buttons */
+  margin: 20px 0; /* Adds margin for spacing */
+}
+
+/* Styles for the generate report buttons */
+.generate-report-button {
+  background-color: #4CAF50; /* Green background */
+  border: none;
+  color: white;
+  padding: 10px 20px; /* Adds padding for the button */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px; /* Rounds the corners */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.generate-report-button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+  .report-buttons {
+    flex-direction: column; /* Stack buttons vertically on smaller screens */
+    gap: 5px;
+  }
+
+  .generate-report-button {
+    width: 100%; /* Full width for buttons on smaller screens */
+  }
+}
