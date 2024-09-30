@@ -54,8 +54,9 @@ const updateLoanApplication = async (req, res, next) => {
     if (req.body.registrationFee) updateFields.registrationFee = req.body.registrationFee;
     if (req.body.totalLoanAmount) updateFields.totalLoanAmount = req.body.totalLoanAmount;
     if (req.body.selectedBank) updateFields.selectedBank = req.body.selectedBank;
+    if (req.body.status) updateFields.status = req.body.status; // Add this line
+    if (req.body.steps) updateFields.steps = req.body.steps; // Add this line
 
-    // Debugging the update fields
     console.log('Update Fields:', updateFields);
 
     const updatedLoanApplication = await LoanApplication.findByIdAndUpdate(

@@ -41,6 +41,7 @@ import EditDocumentHeader from "./Components/EditDocumentHeader";
 
 import LoanAppView from "./Loan/LoanAppView";
 import Home from "./pages/Home";
+import EducationLoan from "./Loan/EducationLoan";
 
 const App = () => {
   return (
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="/loan-app-list" element={<LoanAppList />} />
           <Route path="/loan-app-view/:id" element={<LoanAppView />} />
           <Route path="/loan-app-edit/:id" element={<EditLoanApplication />} />
+          <Route path="/loan-app-web" element={<EducationLoan />} />
           <Route path="/bank-list" element={<ViewBanks />} />
           <Route path="/bank-add" element={<AddNewBank />} />
           <Route path="/bank-edit/:id" element={<EditBank />} />{" "}

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Row, Col, Button, Input, Typography, Modal } from 'antd'; // Ensure Modal is imported from 'antd'
-import { FaSearch, FaEye, FaEdit, FaTrash } from 'react-icons/fa'; // Import icons from react-icons/fa
-import { AiOutlinePlus } from 'react-icons/ai'; // Import AiOutlinePlus from react-icons/ai
+import { Card, Row, Col, Button, Input, Typography, Modal } from 'antd';
+import { FaSearch, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+import { AiOutlinePlus } from 'react-icons/ai';
 import PageTitle from '../Components/PageTitle';
 import axios from 'axios';
-import ViewBankDetails from './ViewBankDetails'; // Import the ViewBankDetails component
+import ViewBankDetails from './ViewBankDetails';
 
 const { Title } = Typography;
-const { confirm } = Modal; // Use Modal from Ant Design
+const { confirm } = Modal;
+const BASE_URL = 'http://localhost:5000'; // Base URL for your server
 
 function ViewBanks() {
   const [banks, setBanks] = useState([]);
@@ -17,28 +18,32 @@ function ViewBanks() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch banks from the API
-    axios.get('http://localhost:5000/banks/list')
+    fetchBanks();
+  }, []);
+
+  const fetchBanks = () => {
+    axios.get(`${BASE_URL}/banks/list`)
       .then(response => {
+        console.log(response.data);
         setBanks(response.data);
       })
       .catch(error => {
         console.error('Error fetching banks:', error);
       });
-  }, []);
+  };
 
   const handleViewClick = (bank) => {
     setSelectedBank(bank);
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
-    setSelectedBank(null); // Clear the selected bank
+    setIsModalOpen(false);
+    setSelectedBank(null);
   };
 
   const handleEditClick = (bankId) => {
-    navigate(`/bank-edit/${bankId}`); // Navigate to the edit page
+    navigate(`/bank-edit/${bankId}`);
   };
 
   const handleAddNewBankClick = () => {
@@ -57,9 +62,9 @@ function ViewBanks() {
       okType: 'danger',
       cancelText: 'Cancel',
       onOk() {
-        axios.delete(`http://localhost:5000/banks/delete/${id}`)
+        axios.delete(`${BASE_URL}/banks/delete/${id}`)
           .then(() => {
-            setBanks(banks.filter(bank => bank._id !== id)); // Refresh the list after deletion
+            setBanks(banks.filter(bank => bank._id !== id));
           })
           .catch(error => {
             console.error('Error deleting bank:', error);
@@ -82,7 +87,6 @@ function ViewBanks() {
               prefix={<FaSearch className="text-gray-500" />}
               className="w-64"
             />
-
             <Button
               type="primary"
               icon={<AiOutlinePlus />}
@@ -91,7 +95,6 @@ function ViewBanks() {
             >
               <span>Add new bank</span>
             </Button>
-
             <Button
               type="primary"
               style={{ backgroundColor: 'green', borderColor: 'green' }}
@@ -110,8 +113,16 @@ function ViewBanks() {
                 <div className="flex justify-center py-4">
                   <img
                     alt={bank.bankName}
-                    src={bank.bankIcon}
+                    src={
+                      bank.bankIcon && bank.bankIcon !== 'undefined'
+                        ? `${BASE_URL}${bank.bankIcon}`
+                        : 'http://localhost:3000/placeholder.png'
+                    }
                     className="h-24 w-auto object-contain"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'http://localhost:3000/placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="py-4">
@@ -121,29 +132,10 @@ function ViewBanks() {
                   <p className="text-gray-500">Max Loan: Rs.{bank.maxLoan}.00</p>
                   <p className="text-gray-500">Repayment Period: {bank.repaymentPeriod} months</p>
                 </div>
-                <div className="flex space-x-4 mt-4">
-                  <Button
-                    type="link"
-                    icon={<FaEdit />}
-                    onClick={() => handleEditClick(bank._id)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    type="link"
-                    icon={<FaEye />}
-                    onClick={() => handleViewClick(bank)}
-                  >
-                    View
-                  </Button>
-                  <Button
-                    type="default"
-                    danger
-                    icon={<FaTrash />}
-                    onClick={() => handleDeleteClick(bank._id)}
-                  >
-                    Delete
-                  </Button>
+                <div className="flex space-x-1 mt-4">
+                  <Button type="link" icon={<FaEdit />} onClick={() => handleEditClick(bank._id)}>Edit</Button>
+                  <Button type="link" icon={<FaEye />} onClick={() => handleViewClick(bank)}>View</Button>
+                  <Button type="default" danger icon={<FaTrash />} onClick={() => handleDeleteClick(bank._id)}>Delete</Button>
                 </div>
               </Card>
             </Col>
@@ -151,12 +143,7 @@ function ViewBanks() {
         </Row>
       </div>
 
-      {/* Modal for bank details */}
-      <ViewBankDetails
-        bank={selectedBank}
-        isVisible={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      <ViewBankDetails bank={selectedBank} isVisible={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }
