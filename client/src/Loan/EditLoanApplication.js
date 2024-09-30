@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, DatePicker, Select, Typography, Modal } from 'antd';
+import { Form, Input, DatePicker, Select, Typography, Modal } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -22,11 +22,13 @@ const EditLoanApplication = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Uncomment these lines when the API is ready
         // const universitiesData = await axios.get('/api/universities');
-        // const banksData = await axios.get('/api/banks');
         // setUniversities(universitiesData.data);
-        // setBanks(banksData.data);
+
+        // Fetch bank data from the backend
+        const banksResponse = await axios.get('http://localhost:5000/banks/list');
+        console.log('Fetched Banks:', banksResponse.data);
+        setBanks(banksResponse.data);
 
         const response = await axios.get(`http://localhost:5000/loan-applications/view/${id}`);
         const loanApplication = response.data;
@@ -91,6 +93,8 @@ const EditLoanApplication = () => {
       },
     });
   };
+
+  console.log('Banks state:', banks);
 
   return (
     <div className="my-3 p-8 rounded border border-gray-200 lg:mx-10">
@@ -172,18 +176,18 @@ const EditLoanApplication = () => {
               </div>
 
               <Form.Item
-                name="selectedBank"
-                label="Select Bank"
-                rules={[{ required: true, message: 'Please select a bank' }]}
-              >
-                <Select placeholder="Select a Bank">
-                  {banks.map(bank => (
-                    <Option key={bank.id} value={bank.name}>
-                      {bank.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
+                  name="selectedBank"
+                  label="Select Bank"
+                  rules={[{ required: true, message: 'Please select a bank' }]}
+                >
+                  <Select placeholder="Select a Bank">
+                    {banks.map(bank => (
+                      <Option key={bank.id} value={bank.bankName}>
+                        {bank.bankName}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
               <div className="flex justify-between mt-6">
                 <motion.button

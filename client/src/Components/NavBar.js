@@ -33,9 +33,9 @@ function NavBar() {
           </Link>
 
           <ul className="flex gap-7 relative text-lg md:text-xl">
-            <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+            <Link to="/"><li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Home
-            </li>
+            </li></Link>
 
             {/* Programs Dropdown */}
             <li
@@ -81,11 +81,13 @@ function NavBar() {
                     Partnerships
                   </li>
                   </Link>
+                  <Link to="/loan-app-list">
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Loan Advisory
                   </li>
+                  </Link>
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-                    Language Test Preparations
+                  <Link to="/LanguageTestPreparation">Language Test Preparations</Link>
                   </li>
                 </ul>
               )}
@@ -94,9 +96,11 @@ function NavBar() {
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Events
             </li>
+            <Link to = "/ViewTransactions">
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Finance
             </li>
+            </Link>
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Feedbacks
             </li>
