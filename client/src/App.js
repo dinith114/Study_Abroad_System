@@ -41,6 +41,12 @@ import EditDocumentHeader from "./Components/EditDocumentHeader";
 
 import LoanAppView from "./Loan/LoanAppView";
 import Home from "./pages/Home";
+import LanguageTestPreparation from "./LanguageTest/LanguageTestPreparation";
+import IELTSPage from "./LanguageTest/IELTSPage";
+import EditPackage from "./LanguageTest/EditPackage";
+import PTEPage from "./LanguageTest/PTEPage";
+import RequestsTable from "./LanguageTest/ViewLanPrepRequest";
+import PackageList from "./LanguageTest/PackageList";
 import EducationLoan from "./Loan/EducationLoan";
 
 const App = () => {
@@ -76,6 +82,17 @@ const App = () => {
           <Route path="/course" element={<Course />} />
           <Route path="/course-table" element={<CourseTable />} />
           <Route path="/partnership-table" element={<PartnershipTable />} />
+
+          <Route path="/LanguageTestPreparation" element={<LanguageTestPreparation />} /> 
+          <Route path="/IELTSPage" element={<IELTSPage />} /> 
+          <Route path="/EditPackage" element={<EditPackage />} /> 
+          <Route path="/PTEPage" element={<PTEPage />} /> 
+          <Route path="/RequestsTable" element={<RequestsTable />} />
+          <Route path="/PackageList" element={<PackageList />} /> 
+          
+
+
+
 
 
           <Route path="/ViewTransactions" element={<ViewTransactions />} /> 

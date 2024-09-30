@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require('dotenv');
 const loanApplicationsRouter = require('./routes/loanApplications');
+const languagePrepRequest = require('./routes/LanguagePrepRoute');
 const fileUpload = require('express-fileupload');
 const bankRoutes = require('./routes/bankRoutes');
 const path = require('path'); // Import the path module
@@ -71,4 +72,5 @@ app.use('/document',documentRoute)
 app.use('/loan-applications', loanApplicationsRouter);
 app.use('/financial',financialRouter);
 
+app.use('/languagePrep',languagePrepRequest);
 app.use('/banks', bankRoutes);
