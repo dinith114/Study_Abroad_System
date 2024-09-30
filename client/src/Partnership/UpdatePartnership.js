@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import Flag from "react-world-flags";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import "./PartnershipForm.css";
-import { useNavigate } from "react-router-dom";
 
 const countryOptions = [
   { value: "AU", label: "Australia", flag: "AU" },
@@ -11,45 +12,97 @@ const countryOptions = [
   // Add more countries as needed
 ];
 
-const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
+const UpdatePartnership = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   const [formData, setFormData] = useState({
     universityName: "",
     ranking: "",
     foundedIn: "",
     institutionType: "",
-    country: { value: "AU", label: "Australia", flag: "AU" }, // Default country
+    country: { value: "AU", label: "Australia", flag: "AU" }, // Set a default country value
     address: "",
-    ...initialData, // Prefill with initial data if available
   });
+  const [loading, setLoading] = useState(true);  // New loading state
+  const [error, setError] = useState("");  // Error state for any fetch issues
 
   useEffect(() => {
-    if (initialData) {
-      setFormData((prevData) => ({
-        ...prevData,
-        ...initialData,
-      }));
-    }
-  }, [initialData]);
+    const fetchPartnershipData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/partnership/getPartnershipsById/${id}`
+        );
+        
+        const partnershipData = response.data;
+
+        console.log("Fetched Partnership Data:", partnershipData);
+
+        // Default country if not found in response
+        const defaultCountry = { value: "AU", label: "Australia", flag: "AU" };
+
+        // Find the selected country or set to default if not available
+        const selectedCountry =
+          countryOptions.find(
+            (option) => option.value === partnershipData.country?.value
+          ) || defaultCountry;
+
+        // Update formData state with fetched data
+        setFormData({
+          universityName: partnershipData?.data?.universityName || "",
+          ranking: partnershipData?.data?.ranking || "",
+          foundedIn: partnershipData?.data?.foundedIn || "",
+          institutionType: partnershipData?.data?.institutionType || "",
+          country: selectedCountry || "",  // Ensure selectedCountry is not undefined
+          address: partnershipData?.data?.address || "",
+        });
+        
+
+        setLoading(false);  // Stop loading once data is fetched
+      } catch (error) {
+        console.error(
+          "Error fetching partnership data:",
+          error.response ? error.response.data : error.message
+        );
+        setError("Failed to fetch partnership data. Redirecting to the partnership table.");
+        setLoading(false);  // Stop loading on error
+      }
+    };
+
+    fetchPartnershipData();
+  }, [id, navigate]);
 
   const handleCountryChange = (selectedOption) => {
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       country: selectedOption,
-    });
+    }));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    onSubmit(formData); // Call the onSubmit function passed as a prop
+    try {
+      await axios.put(`http://localhost:5000/partnership/updatePartnership/${id}`, {
+        ...formData,
+        country: { // Send country as an object
+          value: formData.country.value,
+          label: formData.country.label,
+          flag: formData.country.flag,
+        },
+      });
+      navigate("/partnership-table");
+    } catch (error) {
+      console.error("There was an error updating the partnership!", error);
+      alert("Failed to update partnership. Please try again.");
+    }
   };
 
   const customStyles = {
@@ -72,11 +125,18 @@ const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
     </div>
   );
 
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  if (loading) {
+    return <p>Loading partnership data...</p>;  // Show loading message while fetching
+  }
 
-  const handleUpdateUniversity = () => {
-    navigate('/partnership-table'); // Navigate to the PartnershipForm page
-  };
+  if (error) {
+    return (
+      <div>
+        <p>{error}</p>
+        <button onClick={() => navigate("/partnership-table")}>Go Back</button>
+      </div>
+    );  // Show error message and a "Go Back" button if fetching fails
+  }
 
   return (
     <div className="form-container">
@@ -90,6 +150,7 @@ const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
             value={formData.universityName}
             onChange={handleChange}
             placeholder="Enter University Name"
+            required
           />
         </div>
         <div className="form-group">
@@ -110,7 +171,8 @@ const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
             value={formData.foundedIn}
             onChange={handleChange}
             placeholder="Enter the Year"
-            min="2024"
+            min="1000"
+            required
           />
         </div>
         <div className="form-group">
@@ -121,6 +183,7 @@ const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
             value={formData.institutionType}
             onChange={handleChange}
             placeholder="Enter Institution Type"
+            required
           />
         </div>
         <div className="form-group">
@@ -131,6 +194,7 @@ const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
             options={countryOptions}
             styles={customStyles}
             formatOptionLabel={formatOptionLabel}
+            required
           />
         </div>
         <div className="form-group">
@@ -141,9 +205,10 @@ const UpdatePartnership = ({ initialData = {}, onSubmit }) => {
             value={formData.address}
             onChange={handleChange}
             placeholder="Enter Address"
+            required
           />
         </div>
-        <button type="submit" className="submit-btn" onClick={handleUpdateUniversity}>
+        <button type="submit" className="submit-btn">
           UPDATE
         </button>
       </form>

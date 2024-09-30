@@ -1,22 +1,28 @@
-// src/Modal.js
 import React from 'react';
-import './Modal.css'; // Make sure to style the modal
+import './Modal.css';
+import { FaTimes } from 'react-icons/fa'; // Importing a close icon from react-icons
 
-const Modal = ({ isOpen, onClose, details }) => {
-  if (!isOpen) return null;
-
+function Modal({ title, description, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>×</button>
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button className="close-btn" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
         <div className="modal-body">
-          <h2>{details.title}</h2>
-          <p>{details.description}</p>
-          {/* You can add more details here */}
+          <p>{description}</p>
+        </div>
+        <div className="modal-footer">
+          <button className="action-btn" onClick={onClose}>
+            Close
+          </button>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default Modal;

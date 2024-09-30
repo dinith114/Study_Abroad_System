@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { Link } from "react-router-dom";
+import axios from 'axios'; // Ensure axios is installed
+import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
+import './CourseTable.css'; // Import CSS for styling
 
 const courseLevels = [
   { value: "undergraduate", label: "Undergraduate" },
@@ -23,7 +25,8 @@ const currencyOptions = [
   // Add more currencies as needed
 ];
 
-const UpdateCourse = ({ initialData = {}, onSubmit }) => {
+const UpdateCourse = () => {
+  const { id } = useParams(); // Get the course ID from the URL
   const [formData, setFormData] = useState({
     universityName: "",
     courseName: "",
@@ -33,17 +36,34 @@ const UpdateCourse = ({ initialData = {}, onSubmit }) => {
     intake: "",
     courseLevel: null,
     courseType: null,
-    ...initialData, // Prefill with initial data if available
   });
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
-    if (initialData) {
-      setFormData((prevData) => ({
-        ...prevData,
-        ...initialData,
-      }));
-    }
-  }, [initialData]);
+    const fetchCourseData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/course/getCourseById/${id}`);
+        console.log("response",response)
+        console.log("response",response.data.data.universityName)
+        setFormData({
+          universityName: response.data.data.universityName,
+          courseName: response.data.data.courseName,
+          duration: response.data.data.duration,
+          tuitionFee: response.data.data.tuitionFee,
+          currency: currencyOptions.find(option => option.value === response.data.data.currency),
+          intake: response.data.data.intake,
+          courseLevel: courseLevels.find(option => option.value === response.data.data.courseLevel),
+          courseType: courseTypes.find(option => option.value === response.data.data.courseType),
+        });
+
+        console.log("formDate",formData)
+      } catch (error) {
+        console.error('Error fetching course data:', error);
+      }
+    };
+
+    fetchCourseData();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,10 +83,19 @@ const UpdateCourse = ({ initialData = {}, onSubmit }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    onSubmit(formData); // Call the onSubmit function passed as a prop
+    try {
+      await axios.put(`http://localhost:5000/course/updateCourse/${id}`, {
+        ...formData,
+        currency: formData.currency?.value,
+        courseLevel: formData.courseLevel?.value,
+        courseType: formData.courseType?.value,
+      });
+      navigate('/course-table'); // Redirect to course table after update
+    } catch (error) {
+      console.error('Error updating course:', error);
+    }
   };
 
   return (
@@ -170,11 +199,9 @@ const UpdateCourse = ({ initialData = {}, onSubmit }) => {
           </div>
         </div>
 
-        <Link to='/course-table'>
         <button type="submit" className="submit-btn">
           UPDATE
         </button>
-        </Link>
       </form>
     </div>
   );

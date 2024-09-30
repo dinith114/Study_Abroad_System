@@ -36,6 +36,11 @@ function NavBar() {
             <Link to="/"><li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Home
             </li></Link>
+            <Link to ="./view-partnerships">
+            <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+              Home
+            </li>
+            </Link>
 
             {/* Programs Dropdown */}
             <li
@@ -76,7 +81,7 @@ function NavBar() {
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Application Process
                   </li>
-                  <Link to="./partnership-form">
+                  <Link to="./partnership-table">
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Partnerships
                   </li>

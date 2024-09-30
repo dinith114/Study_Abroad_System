@@ -6,6 +6,7 @@ import Modal from './Modal';
 import universityLogo from '../Images/Cambridge.png';
 import universityLogo2 from '../Images/melbourne.png';
 import universityLogo3 from '../Images/Auckland.png';
+import { Link } from 'react-router-dom';
 
 function ViewPartnerships() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +32,7 @@ function ViewPartnerships() {
   return (
     <div className="container">
       <div class="page-container">
-  <h1>SEARCH PROGRAMS </h1>
+      <h1 className="search-title">SEARCH PROGRAMS</h1>
   <div class="container">
     {/* Filter Panel */}
     <div className="filter-panel">
@@ -84,7 +85,9 @@ function ViewPartnerships() {
         </div>
 
         <div className="filter-actions">
+          <Link to={'/course-details'}>
           <button className="apply-filter">Apply Filter</button>
+          </Link>
           <button className="reset-filter">Reset Filter</button>
         </div>
       </div>
@@ -133,7 +136,16 @@ function ViewPartnerships() {
                 <p>October</p>
               </div>
             </div>
-            <button className="view-details" onClick={() => openModal('Advanced Diploma in Technology', 'Detailed description of the Advanced Diploma in Technology, Religion, and Philosophy of Religion.')}>View Details</button>
+            <button 
+                  className="view-details" 
+                  onClick={() => openModal(
+                    'Advanced Diploma in Technology', 
+                    'Detailed description of the Advanced Diploma in Technology, Religion, and Philosophy of Religion.',
+                  )}
+                >
+                  View Details
+              </button>
+           
           </div>
           
           {expandedCards[1] && (
@@ -154,7 +166,15 @@ function ViewPartnerships() {
                     <p>October</p>
                   </div>
                 </div>
-                <button className="view-details" onClick={() => openModal('Advanced Diploma in Technology', 'Detailed description of the Advanced Diploma in Technology, Religion, and Philosophy of Religion.')}>View Details</button>
+                <button 
+                  className="view-details" 
+                  onClick={() => openModal(
+                    'CPGS in Theology and Religious Studies', 
+                    'Cambridge University`s Faculty of Divinity offers CPGS in Theology and Religious Studies Certificate program. The 9 months course of CPGS in Theology and Religious Studies is offered by the Cambridge University. To pursue Certificate CPGS in Theology and Religious Studies fees for international students is Pound 25758.0. The Cambridge University CPGS in Theology and Religious Studies requirement for international students is IELTS. Graduation cutoff for admission is 70.0%. .',
+                  )}
+                >
+                  View Details
+              </button>
               </div>
               <div className="program-details">
                 <h3>PhD in Zoology</h3>
@@ -183,7 +203,7 @@ function ViewPartnerships() {
         </div>
 
         {/* Program Card 2 */}
-        <div className="program-card">
+        <div className="program-card2">
           <div className="header">
             <img src={universityLogo2} alt="University Logo" className="university-logo" />
             <div className="header-details">
@@ -274,7 +294,7 @@ function ViewPartnerships() {
         </div>
 
         {/* Program Card 3 */}
-        <div className="program-card">
+        <div className="program-card3">
           <div className="header">
             <img src={universityLogo3} alt="University Logo" className="university-logo" />
             <div className="header-details">

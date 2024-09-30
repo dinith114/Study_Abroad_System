@@ -20,7 +20,6 @@ h1 {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Deeper shadow for more depth */
   letter-spacing: 1.2px; /* Slightly increased letter spacing for readability */
   text-transform: uppercase; /* Transform text to uppercase for emphasis */
-  border: 3px solid #0056b3; /* Add a subtle border to define the heading */
   position: relative; /* Allows for decorative elements */
   overflow: hidden; /* Prevents overflow of decorative elements */
 }
@@ -163,8 +162,36 @@ h1 {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease;
   }
+
+  .program-card2 {
+    width: 850px;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+  }
+
+  .program-card3 {
+    width: 850px;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+  }
   
   .program-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .program-card2:hover {
+    transform: translateY(-5px);
+  }
+  
+  .program-card3:hover {
     transform: translateY(-5px);
   }
   
@@ -321,6 +348,16 @@ h1 {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
+.program-card2:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.program-card3:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
 body {
   font-family: 'Arial', sans-serif;
 }
@@ -353,9 +390,54 @@ body {
 
 
 
+.search-title {
+  background-image: url('../Images/event1.jpg'); /* Replace with your background image path */
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 36px;
+  font-weight: bold;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  /* Adding shadow and box effects for a richer look */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
 
+/* Gradient overlay for better text visibility on the background image */
+.search-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+  z-index: -1;
+}
 
+/* Text shadow to make the text pop even more */
+.search-title {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
 
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .search-title {
+    font-size: 32px;
+    padding: 40px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-title {
+    font-size: 28px;
+    padding: 30px 10px;
+  }
+}
 
   
 

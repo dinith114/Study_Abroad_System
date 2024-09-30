@@ -1,52 +1,70 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Flag from "react-world-flags"; // Import the Flag component
 import './PartnershipTable.css';
 
-
-const universities = [
-  {
-    name: "University of Cambridge",
-    country: "England",
-    address: "England, United Kingdom",
-    founded: "1209",
-    type: "Public",
-    flag: "🇬🇧",
-  },
-  {
-    name: "University of Melbourne",
-    country: "Australia",
-    address: "Melbourne, Victoria, Australia",
-    founded: "1853",
-    type: "Public",
-    flag: "🇦🇺",
-  },
-  {
-    name: "McGill University",
-    country: "Canada",
-    address: "Montreal, Quebec, Canada",
-    founded: "1821",
-    type: "Public",
-    flag: "🇨🇦",
-  },
-  
-];
-
 const PartnershipTable = () => {
-
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [universities, setUniversities] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const navigate = useNavigate();
 
   const handleAddNewUniversity = () => {
-    navigate('/partnership-form'); // Navigate to the PartnershipForm page
+    navigate('/partnership-form');
   };
 
-  const handleUpdateUniversity = () => {
-    navigate('/update-partnership'); // Navigate to the PartnershipForm page
+  const handleUpdateUniversity = (universityId) => {
+    navigate(`/update-partnership/${universityId}`);
   };
 
+  const handleDeleteUniversity = async (universityId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this university?");
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:5000/partnership/deletePartnership/${universityId}`);
+        setUniversities(universities.filter(uni => uni._id !== universityId)); // Remove the deleted university from state
+      } catch (error) {
+        console.error("There was an error deleting the university!", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/partnership/getPartnerships");
+        if (response.data && Array.isArray(response.data.data)) {
+          setUniversities(response.data.data);
+        } else {
+          console.error("Unexpected response format:", response.data);
+        }
+      } catch (error) {
+        console.error("There was an error fetching the universities!", error);
+      }
+    };
+
+    fetchUniversities();
+  }, []);
+
+  // Filter universities based on the search term
+  const filteredUniversities = universities.filter((uni) =>
+    uni.universityName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="table-container">
-        <h2 className="table-headline">PARTNERSHIP DETAILS</h2>
+      <h2 className="table-headline">PARTNERSHIP DETAILS</h2>
+
+      {/* Search bar */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by University Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -59,21 +77,28 @@ const PartnershipTable = () => {
           </tr>
         </thead>
         <tbody>
-          {universities.map((uni, index) => (
-            <tr key={index}>
-              <td>{uni.name}</td>
-              <td>{uni.flag} {uni.country}</td>
-              <td>{uni.address}</td>
-              <td>{uni.founded}</td>
-              <td>{uni.type}</td>
-              <td>
-              <td>
-                  <button className="edit-button" onClick={handleUpdateUniversity}>✏️</button>
-                  <button className="delete-button">🗑️</button>
+          {filteredUniversities.length > 0 ? (
+            filteredUniversities.map((uni) => (
+              <tr key={uni._id}>
+                <td>{uni.universityName}</td>
+                <td>
+                  <Flag code={uni.country.flag} alt={uni.country.label} style={{ width: '30px', height: '20px', marginRight: '8px' }} />
+                  {uni.country.label}
                 </td>
-              </td>
+                <td>{uni.address}</td>
+                <td>{uni.foundedIn}</td>
+                <td>{uni.institutionType}</td>
+                <td>
+                  <button className="edit-button" onClick={() => handleUpdateUniversity(uni._id)}>✏️</button>
+                  <button className="delete-button" onClick={() => handleDeleteUniversity(uni._id)}>🗑️</button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6">No universities found.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
       <button className="add-new-university" onClick={handleAddNewUniversity}>Add New University</button>
