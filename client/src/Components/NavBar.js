@@ -81,7 +81,7 @@ function NavBar() {
                   </li>
                   </Link>
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-                    Language Test Preparations
+                  <Link to="/LanguageTestPreparation">Language Test Preparations</Link>
                   </li>
                 </ul>
               )}
