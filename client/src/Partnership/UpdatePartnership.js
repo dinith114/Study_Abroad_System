@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import Flag from "react-world-flags";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams,useLocation } from "react-router-dom";
 import axios from "axios";
 import "./PartnershipForm.css";
 
@@ -14,7 +14,9 @@ const countryOptions = [
 
 const UpdatePartnership = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get('id');
 
   const [formData, setFormData] = useState({
     universityName: "",

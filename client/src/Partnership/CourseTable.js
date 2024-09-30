@@ -42,7 +42,7 @@ const CourseTable = () => {
 
   // Update course handler
   const handleUpdateCourse = (courseId) => {
-    navigate(`/update-course/${courseId}`);
+    navigate(`/update-course?id=${courseId}`);
   };
 
   // Search and highlight matching university name

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import axios from 'axios'; // Ensure axios is installed
-import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
+import { useParams, useNavigate ,useLocation} from 'react-router-dom'; // Import useParams and useNavigate
 import './CourseTable.css'; // Import CSS for styling
 
 const courseLevels = [
@@ -26,7 +26,9 @@ const currencyOptions = [
 ];
 
 const UpdateCourse = () => {
-  const { id } = useParams(); // Get the course ID from the URL
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get('id'); // Get the course ID from the URL
   const [formData, setFormData] = useState({
     universityName: "",
     courseName: "",
