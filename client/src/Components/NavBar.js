@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
 import logo from "../Images/logo.png";
 import ProfileIcon from "../Images/sec.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 function NavBar() {
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const adminStatus = localStorage.getItem("isAdmin");
+  console.log("adminStatus", adminStatus);
+
+   const navigate = useNavigate();
+
+  // Check the admin status from localStorage on component mount
+  useEffect(() => {
+    const adminStatus = localStorage.getItem("isAdmin") === "true";
+    setIsAdmin(adminStatus); // Set isAdmin state based on localStorage
+  }, []);
 
   // Close the dropdowns when clicking outside
   useEffect(() => {
@@ -24,6 +36,12 @@ function NavBar() {
     };
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("isAdmin"); // Remove isAdmin from localStorage
+    window.location.reload();
+    // Redirect to the login page
+  };
+
   return (
     <div>
       <header className="bg-slate-50 shadow-md">
@@ -33,13 +51,20 @@ function NavBar() {
           </Link>
 
           <ul className="flex gap-7 relative text-lg md:text-xl">
-            <Link to="/"><li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
-              Home
-            </li></Link>
-            <Link to ="./view-partnerships">
-            <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
-              Home
-            </li>
+            <Link to="/">
+              <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+                Home
+              </li>
+            </Link>
+            <Link to="./view-partnerships">
+              <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+                Home
+              </li>
+            </Link>
+            <Link to="/">
+              <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+                Home
+              </li>
             </Link>
 
             {/* Programs Dropdown */}
@@ -54,14 +79,14 @@ function NavBar() {
               {isProgramsOpen && (
                 <ul className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-md w-48 z-50">
                   <Link to="./course-table">
-                  <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                    View Courses
-                  </li>
+                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                      View Courses
+                    </li>
                   </Link>
                   <Link to="./course">
-                  <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                    Add Courses
-                  </li>
+                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                      Add Courses
+                    </li>
                   </Link>
                 </ul>
               )}
@@ -82,30 +107,39 @@ function NavBar() {
                     Application Process
                   </li>
                   <Link to="./partnership-table">
-                  <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-                    Partnerships
-                  </li>
+                    <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
+                      Partnerships
+                    </li>
                   </Link>
                   <Link to="/loan-app-list">
-                  <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-                    Loan Advisory
-                  </li>
+                    <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
+                      Loan Advisory
+                    </li>
                   </Link>
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-                  <Link to="/LanguageTestPreparation">Language Test Preparations</Link>
+                    <Link to="/LanguageTestPreparation">
+                      Language Test Preparations
+                    </Link>
                   </li>
                 </ul>
               )}
             </li>
 
-            <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
-              Events
-            </li>
-            <Link to = "/ViewTransactions">
-            <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
-              Finance
-            </li>
+            <Link to="/eventMain">
+              <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+                Events
+              </li>
             </Link>
+            {adminStatus ? (
+              <Link to="/ViewTransactions">
+                <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+                  Finance
+                </li>
+              </Link>
+            ) : (
+              ""
+            )}
+
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Feedbacks
             </li>
@@ -119,8 +153,13 @@ function NavBar() {
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            <button className="text-white bg-grNavTextHov hover:bg-grNavText hover:scale-105 focus:outline-none font-medium rounded-2xl text-sm md:text-xl px-4 py-2">
-              Log out
+
+            {/* Conditional Button */}
+            <button
+              className="text-white bg-grNavTextHov hover:bg-grNavText hover:scale-105 focus:outline-none font-medium rounded-2xl text-sm md:text-xl px-4 py-2"
+              onClick={isAdmin ? handleLogout : () => navigate("/login")}
+            >
+              {isAdmin ? "Log out" : "Member Log in"}
             </button>
           </div>
         </div>

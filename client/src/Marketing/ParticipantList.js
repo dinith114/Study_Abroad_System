@@ -15,6 +15,8 @@ import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import PageTitle from "../Components/PageTitle";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import "jspdf-autotable"; 
 
 
 
@@ -52,10 +54,33 @@ const ParticipantList = () => {
 
    const navigate = useNavigate();
    const [eventRegisterData, setEventRegisterData] = useState([]);
+   const [bindCounselor,setBindCounselor] = useState("")
+   const [data, setData] = useState(initialData);
+   const [visible, setVisible] = useState(false);
+   const [selectedRecord, setSelectedRecord] = useState(null);
+   const [loading, setLoading] = useState(false);
+   const [assignments, setAssignments] = useState({});
+   const [appointmentTime, setAppointmentTime] = useState(null);
+   const [appointmentDate, setAppointmentDate] = useState(null);
+   const [status, setStatus] = useState(false);
+   const [eventName,setEventName] = useState("")
+     const [filteredData, setFilteredData] = useState(eventRegisterData); 
+     const [searchQuery, setSearchQuery] = useState(""); 
+
    
   useEffect(() => {
     viewRegisterEvent();
   }, []);
+    useEffect(() => {
+      handleSearch(searchQuery); // Filter data whenever search query changes
+    }, [searchQuery, eventRegisterData]); 
+
+    useEffect(() => {
+      const storedAssignments = localStorage.getItem("assignments");
+      if (storedAssignments) {
+        setAssignments(JSON.parse(storedAssignments)); // Load from local storage
+      }
+    }, []);
 
   const viewRegisterEvent = async () => {
     let response = await axios.get(
@@ -63,20 +88,30 @@ const ParticipantList = () => {
     );
     console.log("response", response.data);
     setEventRegisterData(response.data);
+      setFilteredData(response.data);
     console.log("eventRegisterData", eventRegisterData);
   };
 
-
-
-
-  const [data, setData] = useState(initialData);
-  const [visible, setVisible] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [assignments, setAssignments] = useState({});
-  const [appointmentTime, setAppointmentTime] = useState(null);
-  const [appointmentDate, setAppointmentDate] = useState(null);
-  const [status,setStatus] =useState(false)
+  const handleSearch = (query) => {
+    console.log("query", query);
+    if (!query) {
+      setFilteredData(eventRegisterData); // Reset to full list if search query is empty
+    } else {
+      const filtered = eventRegisterData.filter(
+        (participant) =>
+     
+    
+          participant?.firstName?.toLowerCase()?.includes(query.toLowerCase()) ||
+          participant?.lastName?.toLowerCase()?.includes(query.toLowerCase()) ||
+          participant?.email?.toLowerCase()?.includes(query.toLowerCase()) ||
+          participant?.phone?.includes(query) || 
+          participant?.eventName?.includes(query) 
+          
+         
+      );
+      setFilteredData(filtered);
+    }
+  };
 
   const handleView = async(id) => {
     console.log("record",id)
@@ -88,14 +123,12 @@ const ParticipantList = () => {
     setVisible(true);
   };
 
-  const handleConfirm = () => {
-  //   const updatedData = eventRegisterData.map((item) =>{
-  // console.log("item", item);
-  //  console.log("selectedRecord", selectedRecord);
-  //     return item.key === selectedRecord.key ? { ...item, status: "Verified" } : item;
-  //   }
-      
-  //   );
+  const handleConfirm = async() => {
+    let response = await axios.put(
+      `http://localhost:5000/eventRegister/verification/${selectedRecord._id}`
+    );
+    console.log("response",response)
+     viewRegisterEvent();
   setStatus(true);
     // setData(updatedData);
     setVisible(false);
@@ -113,11 +146,24 @@ const ParticipantList = () => {
     }, 2000);
   };
 
-  const handleAssign = (key, counselor) => {
-    setAssignments((prevAssignments) => ({
-      ...prevAssignments,
-      [key]: counselor,
-    }));
+  const handleAssign = async(key, counselor) => {
+    console.log("key", key);
+       console.log("counselor", counselor);
+ 
+    console.log("assignments", assignments);
+      let response = await axios.put(
+        `http://localhost:5000/eventRegister/assignCounselor/${key}/${counselor}`
+      );
+       const assignedCounselor = response.data.counselor;
+          setAssignments((prevAssignments) => {
+            const newAssignments = {
+              ...prevAssignments,
+              [key]: assignedCounselor,
+            };
+            localStorage.setItem("assignments", JSON.stringify(newAssignments)); // Save to local storage
+            return newAssignments;
+          });
+  
   };
 
   const handleRemove = (key) => {
@@ -136,20 +182,80 @@ const ParticipantList = () => {
     setAppointmentDate(date ? date.format("YYYY-MM-DD") : null);
   };
 
-  const handleSendEmail = () => {
-    if (!selectedRecord || !appointmentDate || !appointmentTime) {
-      alert("Please fill in all appointment details.");
-      return;
-    }
+  const handleSendEmail = async() => {
+   console.log(
+     "selectedRecord?.email,selectedRecord?.firstName",
+     selectedRecord?.email,
+     selectedRecord?.firstName
+   );
+  
     // Implement the email sending logic here
-    alert(`Email sent to ${selectedRecord.email} with appointment details:
-    Date: ${appointmentDate}
-    Time: ${appointmentTime}`);
+    // alert(`Email sent to ${selectedRecord.email} with appointment details:
+    // Date: ${appointmentDate}
+    // Time: ${appointmentTime}`);
+     await axios.post(
+       `http://localhost:5000/eventRegister/sendEmail/${selectedRecord?.email}/${appointmentDate}/${appointmentTime}/${selectedRecord?.firstName}`
+     );
+       setVisible(false);
+
   };
+
+  const generateParticipantReport = () => {
+    const doc = new jsPDF();
+    const date = new Date().toLocaleDateString();
+
+    // Add logo and title (if you have a logo, load it as an image)
+    // doc.addImage(logo, 'PNG', 160, 10, 40, 20); // Uncomment if you have a logo
+    doc.setFontSize(18);
+    doc.text("Participant List Report", 14, 20);
+    doc.setFontSize(12);
+    doc.text(`Date: ${date}`, 14, 30);
+
+    // Define table data
+    const tableColumn = ["First Name", "Last Name","Event Name" ,"Email", "Status"];
+    const tableRows = [];
+
+    filteredData.forEach((participant) => {
+      const rowData = [
+        participant.firstName,
+        participant.lastName,
+        participant.eventName,
+        participant.email,
+        participant.status,
+      ];
+      tableRows.push(rowData);
+    });
+
+    // Add the table to the PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 40,
+    });
+
+    // Add company address at the bottom (or any footer content)
+    doc.setFontSize(10);
+    doc.text("Global Reach", 14, doc.internal.pageSize.height - 30);
+    doc.text(
+      "12 Schofield Pl, Colombo 00300",
+      14,
+      doc.internal.pageSize.height - 25
+    );
+    doc.text(
+      "globalreachcolombo@gmail.com | +94 77-222-4700",
+      14,
+      doc.internal.pageSize.height - 20
+    );
+
+    // Save the PDF
+    doc.save("participant_list_report.pdf");
+  };
+
 
   const columns = [
     { title: "Date", dataIndex: "date", key: "date" },
     { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Event", dataIndex: "eventName", key: "eventName" },
     { title: "Mobile", dataIndex: "mobile", key: "mobile" },
     { title: "Email", dataIndex: "email", key: "email" },
     {
@@ -184,38 +290,38 @@ const ParticipantList = () => {
               <Menu>
                 <Menu.Item
                   key="1"
-                  onClick={() => handleAssign(record.key, "Counselor 1")}
+                  onClick={() => handleAssign(record._id, "Counselor 1")}
                 >
                   Counselor 1
                 </Menu.Item>
                 <Menu.Item
                   key="2"
-                  onClick={() => handleAssign(record.key, "Counselor 2")}
+                  onClick={() => handleAssign(record._id, "Counselor 2")}
                 >
                   Counselor 2
                 </Menu.Item>
                 <Menu.Item
                   key="3"
-                  onClick={() => handleAssign(record.key, "Counselor 3")}
+                  onClick={() => handleAssign(record._id, "Counselor 3")}
                 >
                   Counselor 3
                 </Menu.Item>
                 <Menu.Item
                   key="4"
-                  onClick={() => handleAssign(record.key, "Counselor 4")}
+                  onClick={() => handleAssign(record._id, "Counselor 4")}
                 >
                   Counselor 4
                 </Menu.Item>
-                <Menu.Item key="5" onClick={() => handleRemove(record.key)}>
+                <Menu.Item key="5" onClick={() => handleRemove(record._id)}>
                   Remove
                 </Menu.Item>
               </Menu>
             }
           >
-            <Button style={{ padding: "4px 16px", width: "160px" }}>
+            {/* <Button style={{ padding: "4px 16px", width: "160px" }}>
               {assignments[record.key] ? assignments[record.key] : "Assign"}{" "}
               <DownOutlined />
-            </Button>
+            </Button> */}
           </Dropdown>
         </div>
       ),
@@ -230,34 +336,18 @@ const ParticipantList = () => {
       <div className="mb-3 pb-8 rounded border border-gray-200 lg:mx-10">
         <div className="flex justify-between items-center mt-8 mb-4 px-12">
           <div className="flex space-x-4">
-            <Select placeholder="Select Event" style={{ width: "200px" }}>
-              <Option value="Select Event">Select Event</Option>
-              <Option value="Australia Education Exhibition">
-                Australia Education Exhibition
-              </Option>
-              <Option value="New Zealand Education Exhibition">
-                New Zealand Education Exhibition
-              </Option>
-              <Option value="UK Education Exhibition">
-                UK Education Exhibition
-              </Option>
-              <Option value="Canada Education Exhibition">
-                Canada Education Exhibition
-              </Option>
-            </Select>
-            <Select placeholder="Sort by" style={{ width: "150px" }}>
-              <Option value="Sort by">Sort by </Option>
-              <Option value="counselor1">Counselor 1</Option>
-              <Option value="counselor2">Counselor 2</Option>
-              <Option value="counselor3">Counselor 3</Option>
-              <Option value="counselor4">Counselor 4</Option>
-            </Select>
+            <Input
+              placeholder="Search by name, email, or mobile"
+              prefix={<SearchOutlined />}
+              style={{ width: "300px" }}
+              value={searchQuery} // Bind the search query state
+              onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+            />
           </div>
-          <Input
-            placeholder="Search"
-            prefix={<SearchOutlined />}
-            style={{ width: "200px" }}
-          />
+
+          <Button type="primary" onClick={generateParticipantReport}>
+            Download Participant List Report
+          </Button>
         </div>
 
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6 px-6">
@@ -282,13 +372,13 @@ const ParticipantList = () => {
               </tr>
             </thead>
             <tbody>
-              {eventRegisterData.map((row) => (
+              {filteredData.map((row) => (
                 <tr key={row.key} className="bg-white border-b">
-                  <td className="px-6 py-4">{row.createdAt}</td>
+                  <td className="px-6 py-4">{row.createdAt.split("T")[0]}</td>
                   <td className="px-6 py-4">
-                    {row.firstName}
-                    {row.lastName}
+                    {row.firstName} {row.lastName}
                   </td>
+                  <td className="px-6 py-4">{row.eventName}</td>
                   <td className="px-6 py-4">{row.phone}</td>
                   <td className="px-6 py-4">{row.email}</td>
                   <td className={`px-6 py-4 text-center`}>
@@ -316,7 +406,7 @@ const ParticipantList = () => {
                             <Menu.Item
                               key="1"
                               onClick={() =>
-                                handleAssign(row.key, "Counselor 1")
+                                handleAssign(row._id, "Counselor 1")
                               }
                             >
                               Counselor 1
@@ -324,7 +414,7 @@ const ParticipantList = () => {
                             <Menu.Item
                               key="2"
                               onClick={() =>
-                                handleAssign(row.key, "Counselor 2")
+                                handleAssign(row._id, "Counselor 2")
                               }
                             >
                               Counselor 2
@@ -332,7 +422,7 @@ const ParticipantList = () => {
                             <Menu.Item
                               key="3"
                               onClick={() =>
-                                handleAssign(row.key, "Counselor 3")
+                                handleAssign(row._id, "Counselor 3")
                               }
                             >
                               Counselor 3
@@ -340,14 +430,14 @@ const ParticipantList = () => {
                             <Menu.Item
                               key="4"
                               onClick={() =>
-                                handleAssign(row.key, "Counselor 4")
+                                handleAssign(row._id, "Counselor 4")
                               }
                             >
                               Counselor 4
                             </Menu.Item>
                             <Menu.Item
                               key="5"
-                              onClick={() => handleRemove(row.key)}
+                              onClick={() => handleRemove(row._id)}
                             >
                               Remove
                             </Menu.Item>
@@ -355,8 +445,8 @@ const ParticipantList = () => {
                         }
                       >
                         <Button style={{ padding: "4px 16px", width: "160px" }}>
-                          {assignments[row.key]
-                            ? assignments[row.key]
+                          {assignments[row._id]
+                            ? assignments[row._id]
                             : "Assign"}{" "}
                           <DownOutlined />
                         </Button>
@@ -392,7 +482,7 @@ const ParticipantList = () => {
         <Form>
           <Form.Item label="Event">
             <Input
-              value={selectedRecord?.eventName}
+              value={selectedRecord?.eventName || ""}
               style={{ color: "grey" }}
               disabled
             />

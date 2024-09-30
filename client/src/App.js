@@ -38,6 +38,8 @@ import NewTransaction from "./Financial/NewTransaction";
 import Dashboard from "./Financial/Dashboard";
 import DocumentTable from "./Document_Management/DocumentTable";
 import EditDocumentHeader from "./Components/EditDocumentHeader";
+import LoginForm from "./Login/LoginForm";
+
 
 import UpdatePartnership from "./Partnership/UpdatePartnership";
 import UpdateCourse from "./Partnership/UpdateCourse";
@@ -115,6 +117,53 @@ const App = () => {
           <Route path="/view-partnerships" element={<ViewPartnerships />} />
           <Route path="/viewStudent" element={<ViewStudent />} />
         </Routes>
+       
+          <NavBar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/Login" element={<LoginForm />} />
+            <Route path="/creatEvent" element={<EventForm />} />
+            <Route path="/EventForm-edit" element={<EditEventForm />} />
+            <Route path="/participantList" element={<ParticipantList />} />
+            <Route path="/loan-app" element={<LoanApp />} />
+            <Route path="/eventMain" element={<EventMain />} />
+            <Route path="/eventMainStudent" element={<EventMainStudent />} />
+            <Route path="/eventRegister" element={<EventRegister />} />
+            <Route path="/loan-app-list" element={<LoanAppList />} />
+            <Route path="/loan-app-view/:id" element={<LoanAppView />} />
+            <Route
+              path="/loan-app-edit/:id"
+              element={<EditLoanApplication />}
+            />
+            <Route path="/bank-list" element={<ViewBanks />} />
+            <Route path="/bank-add" element={<AddNewBank />} />
+            <Route path="/bank-edit/:id" element={<EditBank />} />{" "}
+            {/* Route for editing a bank */}
+            <Route path="/addStudent" element={<AddStudent />} />
+            <Route path="/editStudent" element={<EditStudent />} />
+            <Route path="/studentProfile" element={<StudentProfile />} />
+            <Route path="/studentList" element={<StudentList />} />
+            <Route
+              path="/registeredStudentList"
+              element={<RegisteredStudentList />}
+            />
+            <Route path="/loan-app-view" element={<LoanDetailsPage />} />
+            <Route path="/loan-app-edit" element={<EditLoanApplication />} />
+            <Route path="/partnership-form" element={<PartnershipForm />} />
+            <Route path="/course" element={<Course />} />
+            <Route path="/course-table" element={<CourseTable />} />
+            <Route path="/partnership-table" element={<PartnershipTable />} />
+            <Route path="/ViewTransactions" element={<ViewTransactions />} />
+            <Route path="/NewTransaction" element={<NewTransaction />} />
+            <Route path="/Dashboard" element={<Dashboard />} /> ?
+            <Route path="/EditTransaction" element={<EditTransaction />} />
+            <Route path="/DocumentTable" element={<DocumentTable />} />
+            <Route
+              path="/EditDocumentHeader"
+              element={<EditDocumentHeader />}
+            />
+          </Routes>
+       
       </Router>
       <Footer />
     </div>

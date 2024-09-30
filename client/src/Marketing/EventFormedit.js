@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Upload,
+  Tag,
 } from "antd";
 import australiaFlag from "../Images/ausFlag.png";
 import newZealandFlag from "../Images/nzFlag.png";
@@ -39,8 +40,9 @@ const EditEventForm = () => {
   console.log("record", record);
   const [coverImage, setCoverImage] = useState(null);
   const [coverImageUrl, setCoverImageUrl] = useState("");
-  const [institutions, setInstitutions] = useState(null);
+  const [institutions, setinstitutions] = useState([]);
   const [institutionsUrl, setInstitutionsUrl] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -58,15 +60,29 @@ const EditEventForm = () => {
       setCoverImageUrl(eventData.coverImage); // Set existing cover image URL
       setInstitutionsUrl(eventData.institutions); // Set existing institutions image URL
 
+      const studyLevels = eventData.studyLevel
+        ? eventData.studyLevel.split(", ")
+        : [];
+      const countriesSelected = eventData.country
+        ? eventData.country.split(", ")
+        : [];
+
+      // Set institutions directly as an array
+      const institutionsArray = eventData.institutions
+        ? eventData.institutions
+        : [];
+
       form.setFieldsValue({
         eventType: eventData.eventType,
         eventName: eventData.eventName,
         eventDate: eventData.eventDate ? moment(eventData.eventDate) : null,
         eventTime: eventData.eventTime,
         location: eventData.location,
-        studyLevel: eventData.studyLevel,
+        studyLevel: studyLevels,
+        country: countriesSelected,
         description: eventData.discription,
       });
+       setinstitutions(institutionsArray);
     } catch (error) {
       console.error("Error fetching event data:", error);
     }
@@ -81,18 +97,26 @@ const EditEventForm = () => {
     }
   };
 
-  const handleInstitutionsChange = (e) => {
-    const file = e.target.files[0];
-    console.log("Selected institutions image:", file);
-    if (file) {
-      setInstitutions(file);
-      setInstitutionsUrl(URL.createObjectURL(file)); // Create a preview URL for the institutions image
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleRemoveName = (institutions) => {
+    setinstitutions(institutions.filter((n) => n !== institutions));
+  };
+
+  const handleAddInstituions = (e) => {
+    e.preventDefault();
+    if (inputValue && !institutions.includes(inputValue)) {
+      setinstitutions([...institutions, inputValue]);
+      setInputValue(""); // Clear input after adding the name
     }
   };
 
   const handleSave = async (values) => {
     console.log("values", values);
     let studyLevel = values.studyLevel.join(", ");
+    let countriesSelected = values.country.join(", ");
     try {
       const formattedValues = {
         ...values,
@@ -201,14 +225,18 @@ const EditEventForm = () => {
               rules={[
                 { required: true, message: "Please enter the event time!" },
                 {
-                  pattern: /^([01]\d|2[0-3]):([0-5]\d)$/,
-                  message: "Please enter a valid time in HH:mm format!",
+                  pattern:
+                    /^(0?[1-9]|1[0-2]):[0-5][0-9]\s*[AP]M\s*-\s*(0?[1-9]|1[0-2]):[0-5][0-9]\s*[AP]M$/,
+                  message:
+                    "Please enter a valid time in the format '9:00 AM - 10:00 AM'.",
                 },
               ]}
             >
-              <Input placeholder="Enter time" style={{ height: "100%" }} />
+              <Input
+                placeholder="Enter time (e.g., 9:00 AM - 10:00 AM)"
+                style={{ height: "100%" }}
+              />
             </Form.Item>
-
             <Form.Item
               label={<b>Location</b>}
               name="location"
@@ -279,31 +307,29 @@ const EditEventForm = () => {
                 {
                   required: true,
                   message: "Please select at least one country!",
-                  validator: (_, value) =>
-                    value && value.length > 0
-                      ? Promise.resolve()
-                      : Promise.reject("Please select at least one country!"),
                 },
               ]}
             >
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-                {countries.map((country) => (
-                  <Checkbox
-                    key={country.value}
-                    value={country.value}
-                    style={{ flex: "1 1 30%", fontSize: "16px" }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={country.flag}
-                        alt={country.label}
-                        style={{ width: "24px", marginRight: "8px" }}
-                      />
-                      {country.label}
-                    </div>
-                  </Checkbox>
-                ))}
-              </div>
+              <Checkbox.Group>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+                  {countries.map((country) => (
+                    <Checkbox
+                      key={country.value}
+                      value={country.value}
+                      style={{ flex: "1 1 30%", fontSize: "16px" }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={country.flag}
+                          alt={country.label}
+                          style={{ width: "24px", marginRight: "8px" }}
+                        />
+                        {country.label}
+                      </div>
+                    </Checkbox>
+                  ))}
+                </div>
+              </Checkbox.Group>
             </Form.Item>
             <Form.Item
               name="coverImage"
@@ -351,51 +377,26 @@ const EditEventForm = () => {
                 </div>
               )}
             </Form.Item>
-            <Form.Item
-              name="institutions"
-              label={<b style={{ fontSize: "18px" }}>Institutions</b>}
-              style={{ flex: "1 1 30%" }}
-              rules={[
-                {
-                  required: true,
-                  message: "Please upload an institutions picture!",
-                },
-                {
-                  validator: (_, value) => {
-                    if (!value || !value.file) {
-                      return Promise.resolve(); // If no file is selected, no need to validate further
-                    }
-                    const allowedTypes = [
-                      "image/jpeg",
-                      "image/png",
-                      "image/gif",
-                    ];
-                    if (allowedTypes.includes(value.file.type)) {
-                      return Promise.resolve(); // Valid file type
-                    }
-                    return Promise.reject(
-                      "Only image files (JPG, PNG, GIF) are allowed!"
-                    );
-                  },
-                },
-              ]}
-            >
-              <input
-                type="file"
-                id="institutions"
-                accept="image/*"
-                onChange={handleInstitutionsChange}
-                style={{ width: "100%" }}
+            <Form.Item label="Institutions">
+              <Input
+                value={inputValue}
+                onChange={handleInputChange}
+                onPressEnter={handleAddInstituions}
+                suffix={<PlusOutlined onClick={handleAddInstituions} />}
+                style={{ marginBottom: "12px", width: "100%" }}
               />
-              {institutionsUrl && (
-                <div style={{ marginTop: "10px" }}>
-                  <img
-                    src={institutionsUrl}
-                    alt="Institutions Preview"
-                    style={{ width: "100%", maxHeight: "200px" }}
-                  />
-                </div>
-              )}
+              <div>
+                {institutions.map((institution, index) => (
+                  <Tag
+                    key={index}
+                    closable
+                    onClose={() => handleRemoveName(institution)}
+                    style={{ marginBottom: "8px" }}
+                  >
+                    {institution}
+                  </Tag>
+                ))}
+              </div>
             </Form.Item>
           </div>
 

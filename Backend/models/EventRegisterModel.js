@@ -39,6 +39,12 @@ const registerEventSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  counselor:{
+    type:String,
+  },
+  eventName:{
+    type:String
+  }
 });
 
 // Export the model

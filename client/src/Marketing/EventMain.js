@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 // import { useNavigate } from "react-router-dom";
+import NavbarImage from "../Images/evenmain1.png";
 import axios from "axios";
 import { Card, Button, Row, Col, Tag } from "antd";
 import EventForm from "./EventForm"; // Import the EventForm component
@@ -10,13 +11,16 @@ import Eventpic3 from "../Images/event3.jpg";
 import Eventpic4 from "../Images/event3.jpg"; // Add your new images here
 import Eventpic5 from "../Images/event3.jpg";
 import Eventpic6 from "../Images/event3.jpg";
-import NavbarImage from "../Images/evenmain1.png"; // Add your image path here
+
+// Add your image path here
 
 const { Meta } = Card;
 
 const EventMain = () => {
   // const navigate = useNavigate();
+  const adminStatus = localStorage.getItem("isAdmin");
   const [showForm, setShowForm] = useState(false);
+  
 
   const [eventCards, setEventCards] = useState([]);
 
@@ -51,33 +55,27 @@ const EventMain = () => {
               <h1 className="text-6xl text-white font-bold">Events</h1>
             </div>
 
-            <div className="relative">
-              {/* "New Event" button */}
-              <Button
-                type="primary"
-                className="absolute top-10 left-0 px-8 py-6 text-xl w-48"
-                onClick={() => setShowForm(true)}
-              >
-                New Event
-              </Button>
+            {adminStatus ?  <div className="relative">
+              <>
+                <Button
+                  type="primary"
+                  className="absolute top-10 left-0 px-8 py-6 text-xl w-48"
+                  onClick={() => setShowForm(true)}
+                >
+                  New Event
+                </Button>
 
-              {/* "View Participants" button with custom text and border color */}
-              <Button
-                type="default"
-                className="absolute top-10 left-56 px-8 py-6 text-xl w-48 text-[#0F2F64] border-black"
-                onClick={() => window.location.href="/participantList"}
-              >
-                View Participants
-              </Button>
+                <Button
+                  type="default"
+                  className="absolute top-10 left-56 px-8 py-6 text-xl w-48 text-[#0F2F64] border-black"
+                  onClick={() => (window.location.href = "/participantList")}
+                >
+                  View Participants
+                </Button>
+              </>
 
-              {/* "Events Reports" button with custom text and border color */}
-              <Button
-                type="default"
-                className="absolute top-10 right-24 px-8 py-6 text-xl w-48 text-[#0F2F64] border-black"
-              >
-                Events Reports
-              </Button>
-            </div>
+            </div> : "" }
+           
           </div>
 
           <Row gutter={[16, 16]} justify="center">
@@ -90,7 +88,7 @@ const EventMain = () => {
                       alt={event.eventName}
                       src={event.coverImage}
                       className="rounded-t-lg"
-                      onClick={() => handleNavigate(event._id)}
+                      onClick={() => adminStatus ? handleNavigate(event._id) : ""}
                     />
                   }
                   className="rounded-lg shadow-md overflow-hidden"
@@ -115,7 +113,9 @@ const EventMain = () => {
                     type="primary"
                     block
                     className="mt-4 rounded-lg font-bold"
-                    onClick={() =>  window.location.href =`/eventRegister?id=${event._id}`}
+                    onClick={() =>
+                      (window.location.href = `/eventRegister?id=${event._id}`)
+                    }
                   >
                     View and Register
                   </Button>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, DatePicker, Form, Input, Select } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, Select, Tag } from "antd";
 import australiaFlag from "../Images/ausFlag.png";
 import newZealandFlag from "../Images/nzFlag.png";
 import canadaFlag from "../Images/canFlag.png";
@@ -23,14 +23,27 @@ const countries = [
   { label: "United States", value: "United States", flag: usFlag },
 ];
 
+const studyLevels = [
+  { label: "Undergraduate", value: "Undergraduate" },
+  { label: "Postgraduate", value: "Postgraduate" },
+  { label: "Doctorate", value: "Doctorate" },
+  { label: "Diploma", value: "Diploma" },
+];
+
 function EventForm() {
   const [coverImage, setCoverImage] = useState(null);
-  const [institutions, setinstitutions] = useState(null);
+  const [institutions, setinstitutions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [names, setNames] = useState([]);
+  
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     console.log("hii");
     console.log("values", values);
+    if (Array.isArray(values.studyLevel)) {
+      values.studyLevel = values.studyLevel.join(", "); // Join selected levels as a comma-separated string
+    }
     const formData = new FormData();
     // Append normal form fields
     Object.keys(values).forEach((key) => {
@@ -46,15 +59,11 @@ function EventForm() {
       formData.append("coverImage", coverImage);
     }
 
-    // Append files for institutions
-     if (institutions) {
-      console.log("ccccccccccccccc")
-       formData.append("institutions", institutions);
-     }
-    // institutionsFiles.forEach((file) => {
-    //   formData.append("institutions", file);
-    // });
-  console.log("formData", formData);
+    if(institutions){
+        formData.append("institutions", institutions);
+    }
+
+    console.log("formData", formData);
     try {
       const response = await axios.post(
         "http://localhost:5000/event/createEvent",
@@ -71,6 +80,23 @@ function EventForm() {
       console.error("Error updating data:", error);
     }
   };
+
+   const handleInputChange = (e) => {
+     setInputValue(e.target.value);
+   };
+
+   const handleAddInstituions = (e) => {
+    e.preventDefault(); 
+     if (inputValue && !institutions.includes(inputValue)) {
+       setinstitutions([...institutions, inputValue]);
+       setInputValue(""); // Clear input after adding the name
+     
+     }
+   };
+
+   const handleRemoveName = (institutions) => {
+     setinstitutions(institutions.filter((n) => n !== institutions));
+   };
 
   return (
     <div>
@@ -138,52 +164,22 @@ function EventForm() {
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "30px" }}>
             <Form.Item
+              label={<b>Time</b>}
               name="eventTime"
-              label={<b style={{ fontSize: "18px" }}>Time</b>}
-              style={{ flex: "1 1 30%", height: "80px" }}
+              style={{ flex: "1 1 30%", height: "64px" }}
               rules={[
                 { required: true, message: "Please enter the event time!" },
                 {
-                  validator: (_, value) => {
-                    // Check if value is empty
-                    if (!value) {
-                      return Promise.reject("Please enter the event time!");
-                    }
-
-                    // Check if value matches HH:mm format
-                    // const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
-                    // if (!timePattern.test(value)) {
-                    //   return Promise.reject(
-                    //     "Please enter a valid time in HH:mm format!"
-                    //   );
-                    // }
-
-                    // Convert time string to minutes for comparison
-                    const [hours, minutes] = value.split(":").map(Number);
-                    const timeInMinutes = hours * 60 + minutes;
-
-                    // Define time ranges in minutes
-                    const startTimeInMinutes = 10 * 60; // 10:00 AM
-                    const endTimeInMinutes = 14 * 60; // 2:00 PM
-
-                    // Check if time is within range
-                    if (
-                      timeInMinutes < startTimeInMinutes ||
-                      timeInMinutes > endTimeInMinutes
-                    ) {
-                      return Promise.reject(
-                        "Time must be between 10:00 AM and 2:00 PM!"
-                      );
-                    }
-
-                    return Promise.resolve();
-                  },
+                  pattern:
+                    /^(0?[1-9]|1[0-2]):[0-5][0-9]\s*[AP]M\s*-\s*(0?[1-9]|1[0-2]):[0-5][0-9]\s*[AP]M$/,
+                  message:
+                    "Please enter a valid time in the format '9:00 AM - 10:00 AM'.",
                 },
               ]}
             >
               <Input
-                placeholder="Enter time"
-                style={{ height: "100%", fontSize: "16px" }}
+                placeholder="Enter time (e.g., 9:00 AM - 10:00 AM)"
+                style={{ height: "100%" }}
               />
             </Form.Item>
             <Form.Item
@@ -216,18 +212,25 @@ function EventForm() {
                 },
               ]}
             >
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "20px",
-                }}
-              >
-                <Checkbox style={{ fontSize: "16px" }}>Undergraduate</Checkbox>
-                <Checkbox style={{ fontSize: "16px" }}>Postgraduate</Checkbox>
-                <Checkbox style={{ fontSize: "16px" }}>Doctorate</Checkbox>
-                <Checkbox style={{ fontSize: "16px" }}>Diploma</Checkbox>
-              </div>
+              <Checkbox.Group>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "20px",
+                  }}
+                >
+                  {studyLevels.map((level) => (
+                    <Checkbox
+                      key={level.value}
+                      value={level.value}
+                      style={{ fontSize: "16px" }}
+                    >
+                      {level.label}
+                    </Checkbox>
+                  ))}
+                </div>
+              </Checkbox.Group>
             </Form.Item>
           </div>
 
@@ -332,47 +335,26 @@ function EventForm() {
                 style={{ width: "100%" }}
               />
             </Form.Item>
-            <Form.Item
-              name="institutions"
-              label={<b style={{ fontSize: "18px" }}>Cover Picture</b>}
-              style={{ flex: "1 1 30%" }}
-              rules={[
-                {
-                  required: true,
-                  message: "Please upload an institutions picture!",
-                },
-                {
-                  validator: (_, value) => {
-                    if (!value || !value.file) {
-                      return Promise.resolve(); // If no file is selected, no need to validate further
-                    }
-                    const allowedTypes = [
-                      "image/jpeg",
-                      "image/png",
-                      "image/gif",
-                    ];
-                    if (allowedTypes.includes(value.file.type)) {
-                      return Promise.resolve(); // Valid file type
-                    }
-                    return Promise.reject(
-                      "Only image files (JPG, PNG, GIF) are allowed!"
-                    );
-                  },
-                },
-              ]}
-            >
-              <input
-                type="file"
-                id="institutions"
-                accept="image/*"
-                // onChange={(e) => setCoverImage(e.target.files[0])}
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  console.log("Selected file:", e.target); // Log the selected file
-                  setinstitutions(file); // Update the state with the selected file
-                }}
-                style={{ width: "100%" }}
+            <Form.Item label="Institutions">
+              <Input
+                value={inputValue}
+                onChange={handleInputChange}
+                onPressEnter={handleAddInstituions}
+                suffix={<PlusOutlined onClick={handleAddInstituions} />}
+                style={{ marginBottom: "12px", width: "100%" }}
               />
+              <div>
+                {institutions.map((institutions, index) => (
+                  <Tag
+                    key={index}
+                    closable
+                    onClose={() => handleRemoveName(institutions)}
+                    style={{ marginBottom: "8px" }}
+                  >
+                    {institutions}
+                  </Tag>
+                ))}
+              </div>
             </Form.Item>
           </div>
 

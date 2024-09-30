@@ -41,7 +41,7 @@ const eventCreateSchema = new mongoose.Schema({
     required: true,
   },
   institutions: {
-    type: String,
+    type: [String],
     required: true,
   },
 });

@@ -15,16 +15,16 @@ const createEvent = async (req, res) => {
       discription: req.body.discription,
       country: req.body.country,
       coverImage: "",
-      institutions: "",
+      institutions: req.body.institutions,
     });
 
     const file1 = req.files.coverImage;
     const attch_url = uploadFile(file1);
     newEvent.coverImage = attch_url;
 
-    const file2 = req.files.institutions;
-    const attch_url2 = uploadFile(file2);
-    newEvent.institutions = attch_url2;
+    // const file2 = req.files.institutions;
+    // const attch_url2 = uploadFile(file2);
+    // newEvent.institutions = attch_url2;
 
     const result = await newEvent.save();
     res.status(201).send(result);
@@ -35,6 +35,7 @@ const createEvent = async (req, res) => {
 };
 
 const uploadFile = (file) => {
+  console.log("file",file)
   const file_name = file.name;
   file.mv(`attachFile/` + file_name);
   const url = `http://localhost:5000/` + file_name;

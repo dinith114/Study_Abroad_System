@@ -34,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(express.static(__dirname + "/attachFile"));
 // Serve static files from the 'uploads' folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(__dirname + "/attachFile"));
 
 
 //Pasan image upload
@@ -77,6 +78,7 @@ app.use("/studentapp", StudentApplicationRouter);
 app.use('/loan-applications', loanApplicationsRouter);
 const EventRouter = require("../Backend/routes/EventRoute");
 const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
+const UserRouter = require("../Backend/routes/UserRoute")
 
 const PartnershipRouter = require("../Backend/routes/PartnershipRouter")
 const CourseRouter = require("../Backend/routes/CourseRouter")
@@ -97,3 +99,4 @@ app.use('/banks', bankRoutes);
 
 // Define the sendEmail route
 //router.post('/studentapp/sendEmail/:id', sendEmail);
+app.use("/user", UserRouter);

@@ -13,6 +13,7 @@ const EventRegister = () => {
   const id = queryParams.get("id");
 
   const [eventlist,setEventList] = useState([]);
+  const [geteventName,setGetEventName] = useState("")
 
 useEffect(()=>{
   viewEvents();
@@ -25,6 +26,7 @@ const viewEvents=async()=>{
   console.log("response", response.data);
   setEventList(response.data);
   console.log("eventlist.coverImage", eventlist.coverImage);
+  setGetEventName(response.data.getEventName);
 }
 
 
@@ -42,6 +44,12 @@ const onFinish = async (values) => {
   });
 
   console.log("formData", formData);
+  // Append eventName directly from eventlist
+  if (eventlist.eventName) {
+    formData.append("eventName", eventlist.eventName);
+  } else {
+    console.error("eventName is undefined or empty");
+  }
   try {
     const response = await axios.post(
       "http://localhost:5000/eventRegister/createRegisterEvent",
@@ -52,8 +60,15 @@ const onFinish = async (values) => {
         },
       }
     );
+
     console.log("Response:", response.data);
-    navigate(`/participantList?id=${response.data._id}`); // Redirect after update
+    
+    // Check if the user is an admin
+    if (location.state && location.state.isAdmin) {
+      navigate(`/participantList?id=${response.data._id}`); // Redirect for admins
+    } else {
+      navigate("/eventMain"); // Redirect for non-admin users
+    }
   } catch (error) {
     console.error("Error updating data:", error);
   }
@@ -261,13 +276,25 @@ const onFinish = async (values) => {
               rules={[
                 { required: true, message: "Please enter your age!" },
                 {
-                  type: "number",
-                  min: 16,
-                  message: "Age must be at least 16!",
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.reject("Please enter your age!");
+                    }
+                    const age = parseInt(value, 10);
+                    if (isNaN(age) || age < 16) {
+                      return Promise.reject("Age must be at least 16!");
+                    }
+                    return Promise.resolve();
+                  },
                 },
               ]}
             >
-              <Input placeholder="Enter your age" name="age" />
+              <Input
+                placeholder="Enter your age"
+                type="number"
+                min="16" // Optional, to prevent typing values below 16
+                name="age"
+              />
             </Form.Item>
             <Form.Item
               label="Your City of Residence"
