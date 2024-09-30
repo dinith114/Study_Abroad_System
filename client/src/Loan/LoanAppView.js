@@ -4,6 +4,7 @@ import { Button, Typography, Descriptions, Divider, Spin } from 'antd';
 import { AiOutlineArrowLeft, AiOutlinePrinter } from 'react-icons/ai';
 import axios from 'axios';
 import PageTitle from '../Components/PageTitle';
+import logo from "../Images/logo.png";
 
 const { Title } = Typography;
 
@@ -72,6 +73,15 @@ const LoanAppView = () => {
         </div>
 
         <div id="print-section" className="bg-white p-6 shadow-md rounded-lg">
+          {/* Letterhead for Print */}
+          <div className="hidden print:block text-center mb-6">
+            <img src={logo} alt="Company Logo" className="mx-auto mb-2 w-32" />
+            <h2 className="text-xl font-bold">Global Reach Sri Lanka</h2>
+            <p className="text-sm">12 Schofield Pl, Colombo 00300</p>
+            <p className="text-sm">Phone: +94 77-222-4700 | globalreachcolombo@gmail.com</p>
+            <Divider />
+          </div>
+
           <Title level={3} className="text-center text-2xl font-semibold mb-6">
             Loan Application of {loanApp.firstName} {loanApp.lastName}
           </Title>

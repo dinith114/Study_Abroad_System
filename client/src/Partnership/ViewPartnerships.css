@@ -1,0 +1,444 @@
+.container {
+    display: flex;
+  justify-content: center; 
+  padding: 20px;
+  gap: 20px;
+  }
+
+/* Enhanced h1 heading with blue gradient background and decorative features */
+h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #fff; /* White text for better contrast */
+  margin: 20px 0;
+  padding: 20px 40px; /* Add padding for a spacious feel */
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  width: 100%;
+  background: linear-gradient(90deg, #0062cc, #007bff, #3399ff); /* Gradient background for a modern look */
+  border-radius: 16px; /* Slightly larger rounded corners */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Deeper shadow for more depth */
+  letter-spacing: 1.2px; /* Slightly increased letter spacing for readability */
+  text-transform: uppercase; /* Transform text to uppercase for emphasis */
+  position: relative; /* Allows for decorative elements */
+  overflow: hidden; /* Prevents overflow of decorative elements */
+}
+
+/* Decorative gradient line below the heading */
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: 80%;
+  height: 6px;
+  background: linear-gradient(90deg, #3399ff, #007bff, #0062cc); /* Gradient bar matching the heading */
+  border-radius: 50px;
+  transform: translateX(-50%);
+  opacity: 0.7;
+}
+
+/* Ensure the heading stays at the top of the page */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px; /* Add padding for the overall container */
+  background-color: #f4f4f9; /* Light background color for contrast */
+  min-height: 100vh; /* Ensure the container covers the full viewport height */
+}
+
+/* Add smooth scrolling behavior for the page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optional animation for the heading */
+h1 {
+  animation: slideIn 1.2s ease-out;
+}
+
+
+
+  
+/* Filter panel styles */
+.filter-panel {
+    width: 300px; /* Width of the panel */
+    height: 600px; /* Set a fixed height for the panel (change this value as needed) */
+    padding: 10px; /* Padding inside the panel */
+    background-color: #f4f4f9; /* Background color */
+    border: 1px solid #e0e0e0; /* Border styling */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow effect */
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
+  }
+  .filter-panel h3 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .filter-group {
+    margin-bottom: 20px;
+  }
+  
+  .filter-group label {
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .filter-group input,
+  .filter-group select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease;
+  }
+  
+  .filter-group input:focus,
+  .filter-group select:focus {
+    border-color: #007bff;
+  }
+  
+  .radio-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .radio-group label {
+    font-weight: 500;
+    color: #444;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .filter-actions {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .apply-filter,
+  .reset-filter {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .apply-filter {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .apply-filter:hover {
+    background-color: #0056b3;
+  }
+  
+  .reset-filter {
+    background-color: #e0e0e0;
+    color: #555;
+  }
+  
+  .reset-filter:hover {
+    background-color: #ccc;
+  }
+  
+  /* Program card styles */
+.program-card {
+    width: 850px;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+  }
+
+  .program-card2 {
+    width: 850px;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+  }
+
+  .program-card3 {
+    width: 850px;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+  }
+  
+  .program-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .program-card2:hover {
+    transform: translateY(-5px);
+  }
+  
+  .program-card3:hover {
+    transform: translateY(-5px);
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+  }
+  
+  .university-logo {
+    width: 70px;
+    height: auto;
+    margin-right: 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-details {
+    flex: 1;
+  }
+  
+  .header-details h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .header-details p {
+    margin: 6px 0;
+    color: #777;
+  }
+  
+  .location-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .country-flag {
+    width: 30px;
+    height: auto;
+    border-radius: 4px;
+  }
+  
+  .rating {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .star-icon {
+    width: 22px;
+    height: auto;
+  }
+  
+  /* Info grid and details grid */
+  .info-grid {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    gap: 15px;
+  }
+  
+  .info-grid div,
+  .details-grid div {
+    background-color: #007bff;
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    text-align: center;
+    flex: 1;
+    font-weight: 500;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .info-grid h4,
+  .details-grid p:first-child {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  
+  .details-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 15px;
+  }
+  
+  .details-grid p:last-child {
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+
+  .program-details h3 {
+    font-size:large; /* Increase the font size */
+    font-weight: 500; /* Make the text bold */
+    color: #333333; /* Darker color for readability */
+    margin-bottom: 15px; /* Add some space below the heading */
+    text-align: left; /* Center the heading */
+    text-transform: capitalize; /* Capitalize each word */
+    letter-spacing: 1px; /* Add some letter spacing for better readability */
+    margin-top: auto;
+  }
+  
+  
+  /* Button styles */
+  .view-details,
+  .show-more {
+    padding: 12px 24px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .view-details:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .view-details {
+    margin-top: 20px;
+    align-self: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .show-more {
+    padding: 12px 24px;
+    background-color: transparent; /* No background color initially */
+    color: #000; /* Black text color */
+    border: 2px solid #000; /* Black border initially */
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .show-more:hover {
+    background-color: #007bff; /* Blue background on hover */
+    color: #fff; /* White text on hover */
+    border: none; /* No border on hover */
+  }.program-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.program-card2:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.program-card3:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+}
+
+.filter-panel h3,
+.program-details h3 {
+  font-family: 'Roboto', sans-serif;
+}
+
+.filter-panel {
+  background-color: #e9ecef; /* Lighter background for better readability */
+}
+
+.apply-filter {
+  background-color: #007bff; /* Green for positive actions */
+}
+
+.reset-filter {
+  background-color: #e9ecef; /* Yellow for reset actions */
+}
+
+.show-more {
+  border-color: #007bff;
+}
+
+.info-grid div,
+.details-grid div {
+  padding: 10px;
+}
+
+
+
+.search-title {
+  background-image: url('../Images/event1.jpg'); /* Replace with your background image path */
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 36px;
+  font-weight: bold;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  /* Adding shadow and box effects for a richer look */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* Gradient overlay for better text visibility on the background image */
+.search-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+  z-index: -1;
+}
+
+/* Text shadow to make the text pop even more */
+.search-title {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .search-title {
+    font-size: 32px;
+    padding: 40px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-title {
+    font-size: 28px;
+    padding: 30px 10px;
+  }
+}
+
+  
+
+  

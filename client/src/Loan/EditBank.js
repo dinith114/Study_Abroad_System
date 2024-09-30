@@ -50,10 +50,17 @@ const EditBank = () => {
 
   const onFinish = async (values) => {
     const formData = new FormData();
+
+    // Check if a new file has been uploaded
+    if (fileList.length > 0 && fileList[0].originFileObj) {
+      formData.append('bankIcon', fileList[0].originFileObj);
+    } else {
+      // If no new image, send the existing image URL or handle accordingly
+      formData.append('bankIcon', initialData.bankIcon); // or remove this line if you don't want to send anything
+    }
+
     Object.keys(values).forEach((key) => {
-      if (key === 'bankIcon' && values[key]?.file?.originFileObj) {
-        formData.append(key, values[key].file.originFileObj);
-      } else {
+      if (key !== 'bankIcon') {
         formData.append(key, values[key]);
       }
     });

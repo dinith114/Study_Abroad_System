@@ -3,15 +3,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require('dotenv');
 const loanApplicationsRouter = require('./routes/loanApplications');
+const languagePrepRequest = require('./routes/LanguagePrepRoute');
 const fileUpload = require('express-fileupload');
 const bankRoutes = require('./routes/bankRoutes');
 const path = require('path'); // Import the path module
 const bodyParser = require("body-parser");
+
+
 // const fileuplaod = require("express-fileupload");
 // const upload = require('./middlewares/upload');
-const bodyParser = require("body-parser");
-const fileuplaod = require("express-fileupload");
-const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
@@ -25,6 +25,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(express.static(__dirname + "/attachFile"));
+// Serve static files from the 'uploads' folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 //Pasan image upload
@@ -55,6 +57,8 @@ app.listen(PORT, () => {
 //   completed: Boolean,
 // });
 
+// app.use(cors());
+
 console.log("hi");
 console.log("hi");
 const loanApplicationsRouter = require("./routes/loanApplications");
@@ -72,9 +76,10 @@ const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
 
 app.use("/event", EventRouter);
 app.use("/eventRegister", EventRegisterRouter);
+app.use('/document',documentRoute)
 
 app.use('/loan-applications', loanApplicationsRouter);
+app.use('/financial',financialRouter);
 
+app.use('/languagePrep',languagePrepRequest);
 app.use('/banks', bankRoutes);
-=======
->>>>>>> Stashed changes

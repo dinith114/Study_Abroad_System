@@ -32,9 +32,26 @@ import PartnershipForm from "./Partnership/PartnershipForm";
 import Course from "./Partnership/Course";
 import CourseTable from "./Partnership/CourseTable";
 import PartnershipTable from "./Partnership/PartnershipTable";
+import ViewTransactions from "./Financial/ViewTransactions";
+import EditTransaction from "./Financial/EditTranscation";
+import NewTransaction from "./Financial/NewTransaction";
+import Dashboard from "./Financial/Dashboard";
+import DocumentTable from "./Document_Management/DocumentTable";
+import EditDocumentHeader from "./Components/EditDocumentHeader";
+
+import UpdatePartnership from "./Partnership/UpdatePartnership";
+import UpdateCourse from "./Partnership/UpdateCourse";
+import ViewPartnerships from "./Partnership/ViewPartnerships";
 
 import LoanAppView from "./Loan/LoanAppView";
 import Home from "./pages/Home";
+import LanguageTestPreparation from "./LanguageTest/LanguageTestPreparation";
+import IELTSPage from "./LanguageTest/IELTSPage";
+import EditPackage from "./LanguageTest/EditPackage";
+import PTEPage from "./LanguageTest/PTEPage";
+import RequestsTable from "./LanguageTest/ViewLanPrepRequest";
+import PackageList from "./LanguageTest/PackageList";
+import EducationLoan from "./Loan/EducationLoan";
 
 const App = () => {
   return (
@@ -53,6 +70,7 @@ const App = () => {
           <Route path="/loan-app-list" element={<LoanAppList />} />
           <Route path="/loan-app-view/:id" element={<LoanAppView />} />
           <Route path="/loan-app-edit/:id" element={<EditLoanApplication />} />
+          <Route path="/loan-app-web" element={<EducationLoan />} />
           <Route path="/bank-list" element={<ViewBanks />} />
           <Route path="/bank-add" element={<AddNewBank />} />
           <Route path="/bank-edit/:id" element={<EditBank />} />{" "}
@@ -62,6 +80,36 @@ const App = () => {
           <Route path="/studentProfile" element={<StudentProfile />} />
           <Route path="/studentList" element={<StudentList />} />
           <Route path="/registeredStudentList" element={<RegisteredStudentList />} />
+          <Route path="/loan-app-view" element={<LoanDetailsPage />} />
+          <Route path="/loan-app-edit" element={<EditLoanApplication />} />
+          <Route path="/partnership-form" element={<PartnershipForm />} />
+          <Route path="/course" element={<Course />} />
+          <Route path="/course-table" element={<CourseTable />} />
+          <Route path="/partnership-table" element={<PartnershipTable />} />
+
+          <Route path="/LanguageTestPreparation" element={<LanguageTestPreparation />} /> 
+          <Route path="/IELTSPage" element={<IELTSPage />} /> 
+          <Route path="/EditPackage" element={<EditPackage />} /> 
+          <Route path="/PTEPage" element={<PTEPage />} /> 
+          <Route path="/RequestsTable" element={<RequestsTable />} />
+          <Route path="/PackageList" element={<PackageList />} /> 
+          
+
+
+
+
+
+          <Route path="/ViewTransactions" element={<ViewTransactions />} /> 
+          <Route path="/NewTransaction" element={<NewTransaction />} /> 
+          <Route path="/Dashboard" element={<Dashboard />} /> ?
+          <Route path="/EditTransaction" element={<EditTransaction />} /> 
+          <Route path="/DocumentTable" element={<DocumentTable />} /> 
+          <Route path="/EditDocumentHeader" element={<EditDocumentHeader />} />
+
+
+          <Route path="/update-partnership" element={<UpdatePartnership />} />
+          <Route path="/update-course" element={<UpdateCourse />} />
+          <Route path="/view-partnerships" element={<ViewPartnerships />} />
         </Routes>
       </Router>
       <Footer />

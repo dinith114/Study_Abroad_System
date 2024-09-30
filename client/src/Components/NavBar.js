@@ -36,6 +36,11 @@ function NavBar() {
             <Link to="/"><li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Home
             </li></Link>
+            <Link to ="./view-partnerships">
+            <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
+              Home
+            </li>
+            </Link>
 
             {/* Programs Dropdown */}
             <li
@@ -48,12 +53,16 @@ function NavBar() {
               Programs
               {isProgramsOpen && (
                 <ul className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-md w-48 z-50">
+                  <Link to="./course-table">
                   <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                     View Courses
                   </li>
+                  </Link>
+                  <Link to="./course">
                   <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                     Add Courses
                   </li>
+                  </Link>
                 </ul>
               )}
             </li>
@@ -72,16 +81,18 @@ function NavBar() {
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Application Process
                   </li>
+                  <Link to="./partnership-table">
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Partnerships
                   </li>
+                  </Link>
                   <Link to="/loan-app-list">
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
                     Loan Advisory
                   </li>
                   </Link>
                   <li className="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-                    Language Test Preparations
+                  <Link to="/LanguageTestPreparation">Language Test Preparations</Link>
                   </li>
                 </ul>
               )}
@@ -90,9 +101,11 @@ function NavBar() {
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Events
             </li>
+            <Link to = "/ViewTransactions">
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Finance
             </li>
+            </Link>
             <li className="hidden sm:inline text-grNavText hover:scale-105 hover:text-grNavTextHov">
               Feedbacks
             </li>
