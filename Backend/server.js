@@ -4,6 +4,7 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 const loanApplicationsRouter = require('./routes/loanApplications');
 const languagePrepRequest = require('./routes/LanguagePrepRoute');
+// const loanApplicationsRouter = require('./routes/loanApplications');
 const fileUpload = require('express-fileupload');
 const bankRoutes = require('./routes/bankRoutes');
 const path = require('path'); // Import the path module
@@ -12,7 +13,13 @@ const bodyParser = require("body-parser");
 
 // const fileuplaod = require("express-fileupload");
 // const upload = require('./middlewares/upload');
+const fileuplaod = require("express-fileupload");
 dotenv.config();
+
+//////jj
+//const cors = require('cors');
+//app.use(cors());
+
 
 const app = express();
 
@@ -31,8 +38,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //Pasan image upload
 app.use(fileUpload()); // Add express-fileupload middleware
-// // Create a new bank with file upload
-// router.post('/add', upload.single('bankIcon'), bankController.createBank);
+
 app.use(express.static(__dirname + "/attachFile"));
 
 // connect to mongoDB
@@ -65,8 +71,7 @@ const loanApplicationsRouter = require("./routes/loanApplications");
 // const EventRouter = require("../Backend/routes/EventRoute");
 const StudentApplicationRouter = require("../Backend/routes/StudentApplicationRoute");
 
-app.use("/loan-applications", loanApplicationsRouter);
-// app.use("/event", EventRouter);
+
 app.use("/studentapp", StudentApplicationRouter);
 
 app.use('/loan-applications', loanApplicationsRouter);
@@ -77,6 +82,7 @@ const PartnershipRouter = require("../Backend/routes/PartnershipRouter")
 const CourseRouter = require("../Backend/routes/CourseRouter")
 
 app.use("/event", EventRouter);
+
 app.use("/eventRegister", EventRegisterRouter);
 app.use('/document',documentRoute)
 
@@ -88,3 +94,6 @@ app.use('/financial',financialRouter);
 
 app.use('/languagePrep',languagePrepRequest);
 app.use('/banks', bankRoutes);
+
+// Define the sendEmail route
+//router.post('/studentapp/sendEmail/:id', sendEmail);

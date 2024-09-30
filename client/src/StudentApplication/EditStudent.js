@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Form, Input, Button, DatePicker, Select, Checkbox, Upload, message, Row, Col, Divider, Layout } from 'antd';
-import { UploadOutlined, PlusOutlined, SaveOutlined, DeleteOutlined, CloseOutlined } from '@ant-design/icons';
+import { UploadOutlined, PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import PageTitle from '../Components/PageTitle';
 import axios from 'axios';
 import moment from 'moment';
@@ -135,14 +135,14 @@ function EditStudent() {
     // Logic for save changes
   };
 
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/studentapp/removeStudentApplication/${record}`);
-      navigate("/studentList"); // Redirect after deletion
-    } catch (error) {
-      console.error("Error deleting student:", error);
-    }
-  };
+  // const handleDelete = async () => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/studentapp/removeStudentApplication/${record}`);
+  //     navigate("/studentList"); // Redirect after deletion
+  //   } catch (error) {
+  //     console.error("Error deleting student:", error);
+  //   }
+  // };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -348,9 +348,9 @@ function EditStudent() {
             <Button type="default" onClick={handleCancel} icon={<CloseOutlined />} style={{ marginRight: '10px' }}>
               Cancel
             </Button>
-            <Button type="danger" onClick={handleDelete} icon={<DeleteOutlined />}>
+            {/* <Button type="danger" onClick={handleDelete} icon={<DeleteOutlined />}>
               Delete
-            </Button>
+            </Button> */}
           </Form.Item>
         </Form>
       </div>

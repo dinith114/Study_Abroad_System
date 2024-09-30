@@ -13,6 +13,10 @@ app.delete("/removeStudentApplication/:id", StudentApplicationController.removeS
 
 app.get("/viewOneStudentApplicationEdit/:id", StudentApplicationController.viewOneStudentApplicationEdit);
 
-// Define the PUT route to update the student's status
-// app.put("/updateStudentStatus/:id", studentController.updateStudentStatus);
-module.exports = app;   
+// // New route: Update the status of a student application by ID
+ //app.put("/updateStudentStatus/:id", StudentApplicationController.updatestudentStatus);
+// app.post("/createStatus", StudentApplicationController.createStatus);
+
+app.post("/sendEmail/:id", StudentApplicationController.sendEmail);
+
+module.exports = app;

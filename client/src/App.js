@@ -52,6 +52,7 @@ import PTEPage from "./LanguageTest/PTEPage";
 import RequestsTable from "./LanguageTest/ViewLanPrepRequest";
 import PackageList from "./LanguageTest/PackageList";
 import EducationLoan from "./Loan/EducationLoan";
+import ViewStudent from "./StudentApplication/ViewStudent";
 
 const App = () => {
   return (
@@ -110,6 +111,7 @@ const App = () => {
           <Route path="/update-partnership" element={<UpdatePartnership />} />
           <Route path="/update-course" element={<UpdateCourse />} />
           <Route path="/view-partnerships" element={<ViewPartnerships />} />
+          <Route path="/viewStudent" element={<ViewStudent />} />
         </Routes>
       </Router>
       <Footer />

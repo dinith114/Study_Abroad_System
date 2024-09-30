@@ -1,13 +1,7 @@
   /*const StudentApplicationModel = require("../models/StudentApplicationModel");*/
   const StudentApplication = require("../models/StudentApplicationModel")
   const path = require('path');
-
-  // Custom function to generate studentID
-  // const generateStudentID = async () => {
-  //   const count = await StudentApplication.countDocuments(); // Get total number of student applications
-  //   const timestamp = Date.now(); // Current timestamp
-  //   return `STU-${timestamp}-${count + 1}`; // Example: STU-1634567890000-10
-  // };
+  const nodemailer = require('nodemailer');
 
   //Create
   const createStudentApplication = async (req, res) => {
@@ -16,8 +10,7 @@
           console.log("req", req);
           console.log("req11", req.body);
 
-        //    // Generate the unique studentID using custom logic
-        // const studentId = await generateStudentID();
+        
 
     /* const { studentId, studentFullName, studentFirstName, studentLastName, studentDob, age, nic, gender, email, phoneNumber,
           address, profileImage, currentlyCompleted, otherQualifications, ieltsStatus, incomeLevel, financeSType, preferCourse,
@@ -95,8 +88,9 @@
 
     const viewOneStudentApplication= async (req, res) => {
       try {
+        const { id } = req.params;
         // Retrieve the latest event by sorting in descending order and limiting to 1 record
-        const latestStudent = await StudentApplication.find({}).sort({ createdAt: -1 }).limit(1);
+        const latestStudent = await StudentApplication.findById(id);
     
         if (latestStudent.length === 0) {
           return res.status(404).send("No student found");
@@ -192,32 +186,54 @@
       }
     };
 
-    // New: Update Student Status
-// const updateStudentStatus = async (req, res) => {
-//   const { id } = req.params;
-//   const { status } = req.body;
+    //////////Email
+    const sendEmail = async (req, res) => {
+     try {
+      const {id } = req.params;
 
-//   try {
-//     const updatedStudent = await StudentApplication.findByIdAndUpdate(id, { status }, { new: true });
-//     if (updatedStudent) {
-//       res.status(200).json({ message: 'Status updated successfully', updatedStudent });
-//     } else {
-//       res.status(404).json({ message: 'Student not found' });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ message: 'Failed to update status', error });
-//   }
-// };
-    
-    module.exports = {
+    // Find the record by ID
+      const record = await StudentApplication.findById(id);
+      console.log("record", record);
+      if (!record) {
+        return res.status(404).send("Record not found!");
+      }
+
+    // Create transporter for Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // You can use other email services
+      auth: {
+        user: 'globalreachexperts12@gmail.com', // Use environment variables for security
+        pass: 'hpby vjdz xrqm deyn'
+      }
+    });
+
+    // Email options
+    const mailOptions = {
+      from: "globalreachexperts12@gmail.com",
+      to: record.email,
+      subject: 'Application Status Update',
+      text: `Dear ${record.studentFullName},\n\n` +
+            `This email is to inform you that your application is now in '${record.status}'.\n\n` +
+            `Best regards,\nGlobalReachr Team`
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+      res.status(200).send("Email sent successfully.");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Internal Server Error");
+    }
+};
+
+  module.exports = {
       createStudentApplication,
       viewStudentApplication,
       editStudentApplication,
       removeStudentApplication,
       viewOneStudentApplication,
       viewOneStudentApplicationEdit,
-      // updateStudentStatus, // Export the update status function
-
+      sendEmail,
     };
     
     
