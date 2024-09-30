@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useLocation} from "react-router-dom";
 import axios from "axios";
 import Flag from "react-world-flags"; // Import the Flag component
 import './PartnershipTable.css';
@@ -8,13 +8,14 @@ const PartnershipTable = () => {
   const [universities, setUniversities] = useState([]);
   const [searchTerm, setSearchTerm] = useState(''); // State for search term
   const navigate = useNavigate();
+  
 
   const handleAddNewUniversity = () => {
     navigate('/partnership-form');
   };
 
   const handleUpdateUniversity = (universityId) => {
-    navigate(`/update-partnership/${universityId}`);
+    navigate(`/update-partnership?id=${universityId}`);
   };
 
   const handleDeleteUniversity = async (universityId) => {
