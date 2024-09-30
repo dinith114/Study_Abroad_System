@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, DatePicker, Select, Checkbox, Upload, message, Row, Col, Divider } from 'antd';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Form, Input, Button, DatePicker, Select, Checkbox, Row, Col, Divider, Layout} from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import PageTitle from '../Components/PageTitle';
+import SideMenuBar from '../Components/SideMenuBar';  // Adjust the path based on your file structure
 
 const { Option } = Select;
+const { Sider, Content } = Layout;
 
 function StudentRegistrationForm() {
   const [form] = Form.useForm();
   const [age, setAge] = useState(null);
+  const [avatar,setAvatar] = useState(null)
+  const navigate = useNavigate();
 
   // Handle Date of Birth change and calculate age
   function handleDobChange(date) {
@@ -32,17 +38,34 @@ function StudentRegistrationForm() {
 
   // Handle form submission
   function onFinish(values) {
+    console.log("hiiii")
     console.log('Received values:', values);
-  }
+    const formData = new FormData();
+    // Append normal form fields
+    Object.keys(values).forEach((key) => {
+      if (Array.isArray(values[key])) {
+        formData.append(key, JSON.stringify(values[key])); // Convert array to JSON string
+      } else {
+        formData.append(key, values[key]);
+      }
+    });
+
+    // Append file for cover picture
+    if (avatar) {
+      formData.append("profileImage", avatar);
+    }
+    handleApplicationSubmit(formData);
+}
+
 
   // Handle image upload
-  function onUpload(info) {
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  }
+  // function onUpload(info) {
+  //   if (info.file.status === 'done') {
+  //     message.success(${info.file.name} file uploaded successfully);
+  //   } else if (info.file.status === 'error') {
+  //     message.error(${info.file.name} file upload failed.);
+  //   }
+  // }
 
   // Function to validate NIC number
   function validateNic(_, value) {
@@ -54,42 +77,74 @@ function StudentRegistrationForm() {
     }
   }
 
+
+
+  const handleApplicationSubmit = async (values) => {
+    try {
+      const response = await axios.post("http://localhost:5000/studentapp/createStudentApplication", values);
+      console.log('Update response:', response.data);
+      navigate('/studentList'); // Redirect after update
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  };
+
+
   return (
-    <div>
-      {/* Page Title */}
-      <PageTitle title="Student Application Form" />
+    <Layout style={{ minHeight: '100vh' }}>
+      <SideMenuBar />  {/* Your side menu component */}
+     
+    <Layout>
+    <Content style={{ padding: '10px' }}>
+     <div style={{ padding: "30px", maxWidth: "1000px", margin: "auto", marginLeft: '350px'}}>
 
-      <div style={{ padding: "30px", maxWidth: "1000px", margin: "auto" }}>
-        <Form
-          form={form}
-          name="student_registration"
-          onFinish={onFinish}
-          layout="vertical"
-          style={{background: "#f5f5f5",
-            padding: "40px",
-            borderRadius: "10px",
-            position: "relative", 
+      <Form
+        form={form}
+        name="student_registration"
+        onFinish={onFinish}
+        layout="vertical"
+        style={{background: "#f5f5f5",
+        padding: "40px",
+        borderRadius: "10px",
+        position: "relative",
+        border: "1px solid #d9d9d9", // Light gray border
+        boxShadow: "0 4px 8px #C0C0C0", // Soft shadow
             /*width: '800px', margin: 'auto'*/}}
-        >
-          
-        <Row gutter={150}>
-          <Col span={16}>
+      >
+      <PageTitle title="Student Application Form" />
+      <Row gutter={24}>
+        <Col span={16}>
             {/* Personal Information Section */}
-            <Form.Item label={<b>Full Name</b>} name="fullName" rules={[{ required: true, message: 'Please enter your full name' }]}>
-              <Input placeholder="Enter full name" />
-            </Form.Item>
+          <Form.Item label={<b>Full Name</b>} name="studentFullName" rules={[{ required: true, message: 'Please enter your full name' },
+          {
+            pattern: /^[A-Za-z\s]+$/,
+            message: 'Full name can only contain letters and spaces',
+          },
+          ]}>
+            <Input placeholder="Enter full name" />
+          </Form.Item>
 
-            <Form.Item label={<b>First Name</b>} name="firstName" rules={[{ required: true, message: 'Please enter your first name' }]}>
-              <Input placeholder="Enter first name" />
-            </Form.Item>
+          <Form.Item label={<b>First Name</b>} name="studentFirstName" rules={[{ required: true, message: 'Please enter your first name' },
+          {
+            pattern: /^[A-Za-z\s]+$/,
+            message: 'Full name can only contain letters and spaces',
+          },
+          ]}>
+            <Input placeholder="Enter first name" />
+          </Form.Item>
 
-            <Form.Item label={<b>Last Name</b>} name="lastName">
+            <Form.Item label={<b>Last Name</b>} name="studentLastName" rules={[{ required: true, message: 'Please enter your last name' },
+              {
+                pattern: /^[A-Za-z\s]+$/,
+                message: 'Full name can only contain letters and spaces',
+              },
+            ]}>
               <Input placeholder="Enter last name" />
             </Form.Item>
 
-            <Row gutter={30}>
+            <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label={<b>Date of Birth</b>} name="dob" rules={[{ required: true, message: 'Please select your date of birth' }]}>
+                <Form.Item label={<b>Date of Birth</b>} name="studentDob" rules={[{ required: true, message: 'Please select your date of birth' }]}>
                     <DatePicker style={{ width: '100%' }} onChange={handleDobChange} />
                 </Form.Item>
               </Col>
@@ -100,7 +155,7 @@ function StudentRegistrationForm() {
               </Col>
             </Row>
 
-            <Form.Item label="NIC" name="nic"
+            <Form.Item label={<b>NIC</b>} name="nic"
               rules={[
                 {
                   required: true, 
@@ -126,7 +181,7 @@ function StudentRegistrationForm() {
               <Input placeholder="Enter email" />
             </Form.Item>
 
-            <Form.Item label="Mobile Phone" name="phone" rules={[{ required: true, message: 'Please enter your phone number' }]}>
+            <Form.Item label="Mobile Phone" name="phoneNumber" rules={[{ required: true, message: 'Please enter your phone number' }]}>
               <Input placeholder="Enter mobile phone number" />
             </Form.Item>
 
@@ -135,45 +190,54 @@ function StudentRegistrationForm() {
             </Form.Item>
           </Col>
 
-          <div style={{marginTop: '110px'}} >
+         {/* <div style={{marginTop: '110px'}} > */}
             <Col span={8}>
             {/* Upload Image Section */}
-            <Form.Item name="upload" valuePropName="fileList">
-              <Upload
-                name="avatar"
-                listType="picture-card"
-                showUploadList={false}
-                onChange={onUpload}
-                action="/upload.do"
+            <Form.Item name="profileImage" valuePropName="fileList">
+              <div
+                style={{
+                width: '200px',
+                height: '200px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#f0f0f0',
+                flexDirection: 'column',
+                margin: 'auto',
+                marginTop: '80px',
+                }}
               >
-                    <div
-                    style={{
-                      width: '200px',  // Outer square width
-                      height: '200px',  // Outer square height
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: '#f0f0f0',  // Optional background color for the square
-                    }}
-                  >
-                    <Button
-                      style={{ width: '80%' }}  // Button width as a percentage of the inner square
-                      icon={<UploadOutlined />}
-                    >
-                      Choose Image
-                    </Button>
-                  </div>
-                </Upload>
-              </Form.Item>
-              <div style={{ textAlign: 'center', marginTop:'60px' }}>Upload an Image</div>
+              <input
+                type="file"
+                id="avatar"
+                accept="image/*"
+                onChange={(e) => {
+                const file = e.target.files[0];
+                console.log("Selected file:", e.target); // Log the selected file
+                setAvatar(file); // Update the state with the selected file
+                }}
+                style={{ display: 'none' }} // Hide the input
+              />
+              <Button
+                style={{ width: '80%' }}  // Button width as a percentage of the inner square
+                icon={<UploadOutlined />}
+                onClick={() => document.getElementById('avatar').click()} // Trigger file input click
+              >
+                Choose Image
+              </Button>
+              </div>
+              {/* </Upload> */}
+            </Form.Item>
+            
+              <div style={{ textAlign: 'center', marginTop:'5px', fontWeight:'bold' }}>Upload an Image</div>
             </Col>
-            </div>
+           {/*  </div> */}
           </Row>
           
           <Divider orientation="center" style={{borderColor: 'black'}}>Education Level</Divider>
 
           {/* Education Level Section */}
-          <Form.Item label="Currently Completed" name="educationLevel">
+          <Form.Item label="Currently Completed" name="currentlyCompleted">
             <Checkbox.Group>
               <Checkbox value="oLevel">GCE(O/L)</Checkbox>
               <Checkbox value="aLevel">GCE(A/L)</Checkbox>
@@ -187,7 +251,7 @@ function StudentRegistrationForm() {
             <Input.TextArea placeholder="Enter other educational details" rows={4} />
           </Form.Item>
 
-          <Form.Item label="IELTS/PTE Exam Status" name="examStatus">
+          <Form.Item label="IELTS/PTE Exam Status" name="ieltsStatus">
             <Select placeholder="Select exam status">
               <Option value="completed">Completed</Option>
               <Option value="notCompleted">Not Completed</Option>
@@ -205,7 +269,7 @@ function StudentRegistrationForm() {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Financial Sponsor Type" name="sponsorType">
+          <Form.Item label="Financial Sponsor Type" name="financeSType">
             <Select placeholder="Select sponsor type">
               <Option value="self">Self Sponsored</Option>
               <Option value="parent">Parents</Option>
@@ -217,7 +281,7 @@ function StudentRegistrationForm() {
           <Divider orientation="center" style={{borderColor: 'black'}}>Study Preferences</Divider>
 
           {/* Study Preferences Section */}
-          <Form.Item label="Preferred Course/Subject with Specialization" name="preferredCourse">
+          <Form.Item label="Preferred Course/Subject with Specialization" name="preferCourse">
           <Select placeholder="Enter preferred course or subject">
             <Option value="s&t">Science and Technology</Option>
                 <Option value="m&h">Medicine and Health</Option>
@@ -230,7 +294,7 @@ function StudentRegistrationForm() {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Preferred Country" name="preferredCountry">
+          <Form.Item label="Preferred Country" name="preferCountry">
             <Select placeholder="Select country">
               <Option value="none">None</Option>
               <Option value="australia">Australia</Option>
@@ -239,7 +303,7 @@ function StudentRegistrationForm() {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Preferred University (if any)" name="preferredUniversity">
+          <Form.Item label="Preferred University (if any)" name="preferUniversity">
             <Input placeholder="Enter preferred university" />
           </Form.Item>
 
@@ -251,10 +315,10 @@ function StudentRegistrationForm() {
           </Form.Item>
         </Form>
       </div>
-    </div>
+      </Content>
+      </Layout>
+      </Layout>
   );
 }
 
 export default StudentRegistrationForm;
-
-

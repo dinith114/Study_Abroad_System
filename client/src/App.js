@@ -26,7 +26,8 @@ import StudentProfile from "./StudentApplication/StudentProfile";
 import StudentList from "./StudentApplication/StudentList";
 import EventMainStudent from "./Marketing/EventMainStudent";
 import EventRegister from "./Marketing/EventRegister";
-import RegisteredStudentList from "./StudentApplication/RegisteredStudentsList";
+import RegisteredStudentList from "./StudentApplication/RegisteredStudentList";
+import SideMenuBar from "./Components/SideMenuBar";
 import PartnershipForm from "./Partnership/PartnershipForm";
 import Course from "./Partnership/Course";
 import CourseTable from "./Partnership/CourseTable";
@@ -51,6 +52,7 @@ import PTEPage from "./LanguageTest/PTEPage";
 import RequestsTable from "./LanguageTest/ViewLanPrepRequest";
 import PackageList from "./LanguageTest/PackageList";
 import EducationLoan from "./Loan/EducationLoan";
+import ViewStudent from "./StudentApplication/ViewStudent";
 
 const App = () => {
   return (
@@ -109,6 +111,7 @@ const App = () => {
           <Route path="/update-partnership" element={<UpdatePartnership />} />
           <Route path="/update-course" element={<UpdateCourse />} />
           <Route path="/view-partnerships" element={<ViewPartnerships />} />
+          <Route path="/viewStudent" element={<ViewStudent />} />
         </Routes>
       </Router>
       <Footer />

@@ -4,6 +4,7 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 const loanApplicationsRouter = require('./routes/loanApplications');
 const languagePrepRequest = require('./routes/LanguagePrepRoute');
+// const loanApplicationsRouter = require('./routes/loanApplications');
 const fileUpload = require('express-fileupload');
 const bankRoutes = require('./routes/bankRoutes');
 const path = require('path'); // Import the path module
@@ -12,14 +13,13 @@ const bodyParser = require("body-parser");
 
 // const fileuplaod = require("express-fileupload");
 // const upload = require('./middlewares/upload');
-const financialRouter = require('../Backend/routes/FinancialRoute');
-
-const documentRoute = require('../Backend/routes/DocumentRoute')
-
 const fileuplaod = require("express-fileupload");
-// const cors = require('cors');
-// const dotenv = require("dotenv");
 dotenv.config();
+
+//////jj
+//const cors = require('cors');
+//app.use(cors());
+
 
 const app = express();
 
@@ -38,8 +38,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //Pasan image upload
 app.use(fileUpload()); // Add express-fileupload middleware
-// // Create a new bank with file upload
-// router.post('/add', upload.single('bankIcon'), bankController.createBank);
+
+app.use(express.static(__dirname + "/attachFile"));
 
 // connect to mongoDB
 //mongoose.connect("mongodb://localhost/mern-stack-db");
@@ -67,31 +67,33 @@ app.listen(PORT, () => {
 
 console.log("hi");
 console.log("hi");
+const loanApplicationsRouter = require("./routes/loanApplications");
+// const EventRouter = require("../Backend/routes/EventRoute");
+const StudentApplicationRouter = require("../Backend/routes/StudentApplicationRoute");
+
+
+app.use("/studentapp", StudentApplicationRouter);
+
+app.use('/loan-applications', loanApplicationsRouter);
 const EventRouter = require("../Backend/routes/EventRoute");
 const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
 
+const PartnershipRouter = require("../Backend/routes/PartnershipRouter")
+const CourseRouter = require("../Backend/routes/CourseRouter")
+
 app.use("/event", EventRouter);
+
 app.use("/eventRegister", EventRegisterRouter);
 app.use('/document',documentRoute)
+
+app.use("/course",CourseRouter)
+app.use("/partnership",PartnershipRouter)
 
 app.use('/loan-applications', loanApplicationsRouter);
 app.use('/financial',financialRouter);
 
 app.use('/languagePrep',languagePrepRequest);
 app.use('/banks', bankRoutes);
-// const loanApplicationsRouter = require("./routes/loanApplications");
-// const EventRouter = require("../Backend/routes/EventRoute");
-// const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
-const PartnershipRoute = require("./routes/PartnershipRouter");
-const CourseRoute = require("./routes/CourseRouter");
 
-
-app.use("/course", CourseRoute);
-app.use("/partnership", PartnershipRoute);
-// app.use("/loan-applications", loanApplicationsRouter);
-// app.use("/event", EventRouter);
-// app.use("/eventRegister", EventRegisterRouter);
-
-// app.use('/loan-applications', loanApplicationsRouter);
-
-// app.use('/banks', bankRoutes);
+// Define the sendEmail route
+//router.post('/studentapp/sendEmail/:id', sendEmail);
