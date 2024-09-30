@@ -69,14 +69,19 @@ app.use("/loan-applications", loanApplicationsRouter);
 // app.use("/event", EventRouter);
 app.use("/studentapp", StudentApplicationRouter);
 
-<<<<<<< Updated upstream
 app.use('/loan-applications', loanApplicationsRouter);
 const EventRouter = require("../Backend/routes/EventRoute");
 const EventRegisterRouter = require("../Backend/routes/EventRegisterRoute");
 
+const PartnershipRouter = require("../Backend/routes/PartnershipRouter")
+const CourseRouter = require("../Backend/routes/CourseRouter")
+
 app.use("/event", EventRouter);
 app.use("/eventRegister", EventRegisterRouter);
 app.use('/document',documentRoute)
+
+app.use("/course",CourseRouter)
+app.use("/partnership",PartnershipRouter)
 
 app.use('/loan-applications', loanApplicationsRouter);
 app.use('/financial',financialRouter);
